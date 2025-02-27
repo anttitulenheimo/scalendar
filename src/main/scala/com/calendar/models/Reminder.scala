@@ -3,6 +3,6 @@ import java.time.LocalDateTime
 
 class Reminder(val eventId: String, val remindAt: LocalDateTime) {
 
-  def getReminderTime(): String = ???
+  def getReminderTime(): LocalDateTime = remindAt
   
 }
