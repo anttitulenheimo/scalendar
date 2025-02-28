@@ -1,18 +1,26 @@
 package com.calendar.models
 
-import java.time.LocalDateTime
+import java.time.{ LocalDateTime, LocalDate }
 import scala.io.StdIn
 import scala.util.{ Try, Success, Failure }
 import java.time.format.DateTimeFormatter
+import com.calendar.services.EventValidator
+
+//ToDO implement a better addReminder method
 
 class Event(
   val name: String,
-  val date: LocalDateTime,
+  val date: LocalDate,
+  val startingTime: LocalDateTime,
+  val endingTime: LocalDateTime,
   val category: Category,
   val reminder: Reminder,
   val additionalInfo: Option[String],
   val colorCode: String
 ) {
+
+  // Add a reminder for the event
+
   def addReminder(): Option[Reminder] =
     val remindTimeString: String = StdIn.readLine(
       "Enter reminder time (yyyy-MM-dd HH:mm): "
@@ -33,6 +41,8 @@ class Event(
         None
     }
 
+  // Validate that the event start and end times are correct
+  // Might be useless because the class EventValidator already has methods to validate an event
   def validateTimes(): Boolean = ???
 
 }
