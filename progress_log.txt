@@ -1,1 +1,2 @@
 - Created a better project structure and added classes
+- Implemented methods and added new library depencies "ical4j"
