@@ -14,7 +14,7 @@ object EventValidator {
 
   // Validate that the end time is after start time
   def validateTime(startTime: LocalDateTime, endTime: LocalDateTime): Boolean =
-    startTime.isAfter(endTime)
+    endTime.isAfter(startTime)
 
   // Validate that the input is correct
   def validateInput(input: String, dateAndTime: LocalDateTime): Boolean = ???
