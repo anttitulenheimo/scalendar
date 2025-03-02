@@ -43,6 +43,7 @@ class Event(
 
   // Validate that the event start and end times are correct
   // Might be useless because the class EventValidator already has methods to validate an event
-  def validateTimes(): Boolean = ???
+  def validateTimes(): Boolean =
+    EventValidator.validateTime(startingTime, endingTime)
 
 }

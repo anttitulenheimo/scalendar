@@ -1,2 +1,3 @@
 - Created a better project structure and added classes
 - Implemented methods and added new library depencies "ical4j"
+- Added a converter for iCalendar and a testing object for it

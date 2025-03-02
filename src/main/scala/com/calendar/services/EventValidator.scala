@@ -1,8 +1,10 @@
 package com.calendar.services
 
-import com.calendar.models.Event
+import com.calendar.models.{ Event, Reminder }
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import scala.util.{ Failure, Success, Try }
 
 object EventValidator {
 
@@ -16,7 +18,18 @@ object EventValidator {
   def validateTime(startTime: LocalDateTime, endTime: LocalDateTime): Boolean =
     endTime.isAfter(startTime)
 
-  // Validate that the input is correct
-  def validateInput(input: String, dateAndTime: LocalDateTime): Boolean = ???
+  // Validate that the input is correct (=The input is non-empty) and parsing works
+  def validateInput(input: String, dateAndTime: String): Boolean =
+    input.nonEmpty && (
+      Try(
+        LocalDateTime
+          .parse(dateAndTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+      ) match {
+        case Success(dateAndTime) =>
+          true
+        case Failure(exception) =>
+          false
+      }
+    )
 
 }
