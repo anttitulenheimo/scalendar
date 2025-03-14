@@ -7,3 +7,6 @@ https://javadoc.io/doc/org.mnode.ical4j/ical4j/latest/ical4j.core/module-summary
 
 java.time documentation:
 https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html
+
+javaFX tutorial:
+https://www.tutorialspoint.com/javafx/index.htm
