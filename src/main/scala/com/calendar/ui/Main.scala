@@ -14,45 +14,58 @@ import scalafx.stage.Screen
 object Main extends JFXApp3:
 
   def start() =
+    val screenBounds =
+      Screen.primary.visualBounds // Returns the primary screenbounds
+    val windowWidth = screenBounds.width * 0.8 //Scaled
+    val windowHeight = screenBounds.height * 0.8 //Scaled
     val primaryStage = new JFXApp3.PrimaryStage():
       title = "SCALENDAR - CALENDAR"
-      val screenBounds =
-        Screen.primary.visualBounds // Returns the primary screenbounds
 
-      height = screenBounds.height * 0.8
-      width = screenBounds.width * 0.8
+      width = windowWidth
+      height = windowHeight
+
+      val fontSize = windowWidth * 0.015
 
       val welcomeLabel =
         new Label("Welcome to your calendar") { // ToDO Impelement a better name
           textFill = Black
-          font =
-            Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, 10)
+          font = Font.font(
+            "Montserrat",
+            FontWeight.Light,
+            FontPosture.Regular,
+            fontSize
+          )
         }
 
       val hourViewContainer = new VBox:
-        padding = Insets(10)
+        padding = Insets(windowWidth * 0.01)
         children += hourView
 
-      //Ensure hourView
+      // Ensure hourView
       HBox.setHgrow(hourViewContainer, Priority.Never)
 
-      //weekViewContainer
+      // weekViewContainer
       val weekViewContainer = new VBox:
-        prefHeight = 400
+        prefHeight = windowHeight * 0.5
         alignment = TopCenter
         children += weekView
 
-      //Allow weekView to grow
+      // Allow weekView to grow
       HBox.setHgrow(weekViewContainer, Priority.Always)
 
       // Main container
       val calendarContainer = new HBox:
-        spacing = 20
-        padding = Insets(10, 10, 10, 200)
+        spacing = windowWidth * 0.02
+        padding = Insets(
+          windowWidth * 0.02,
+          windowWidth * 0.02,
+          windowWidth * 0.02,
+          windowWidth * 0.15
+        )
         children ++= Seq(hourViewContainer, weekViewContainer)
 
       val borderPane = new BorderPane { // Main pane
-        padding = Insets(10)
+        padding = Insets(windowWidth * 0.01)
         top = welcomeLabel
         center = calendarContainer
       }
