@@ -63,7 +63,12 @@ object eventView {
           font = Font.font("Montserrat", FontWeight.Light, eventNormalFont)
         }
 
-    eventBox.children.addAll(eventHeading, timeLabel, categoryLabel)
+    eventBox.children.addAll(
+      eventHeading,
+      timeLabel,
+      categoryLabel,
+      additionalInfoLabel
+    )
     eventBox
 
   }
