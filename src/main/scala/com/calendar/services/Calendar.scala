@@ -42,6 +42,11 @@ class Calendar(
   def loadFromFile(filename: String): Unit = ???
 
   // Save events to a file
-  def saveToFile(filename: String): Unit = ???
+  def saveToFile(filename: String): Unit =
+    val iConverter = new ICalendarConverter(getAllEvents, filename)
+    iConverter.writeToFile()
+
+  // Returns all events
+  def getAllEvents: List[Event] = eventMap.values.toList
 
 }
