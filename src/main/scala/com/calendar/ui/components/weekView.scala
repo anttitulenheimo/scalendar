@@ -1,31 +1,32 @@
 package com.calendar.ui.components
 
-import com.calendar.ui.components.weekView.style
-import scalafx.geometry.{ Insets, Pos }
-import scalafx.geometry.Pos.TopCenter
-import scalafx.scene.control.Label
-import scalafx.scene.layout.{ GridPane, VBox }
-import scalafx.scene.text.{ Font, FontPosture, FontWeight }
-import scalafx.scene.layout.ColumnConstraints
 import com.calendar.ui.constants
+import scalafx.geometry.Pos
+import scalafx.geometry.Pos.TopCenter
 import scalafx.scene.control.OverrunStyle.Clip
+import scalafx.scene.control.{ Label, ScrollPane }
+import scalafx.scene.layout.{ GridPane, HBox, Priority, VBox }
+import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
 import java.time.*
+import scala.collection.mutable
 
-object weekView extends GridPane:
+object weekView extends HBox:
+  spacing = 10
   alignment = TopCenter
-  padding = Insets(constants.windowWidth * 0.01)
 
-  style =
-    "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;" // Style to see the borders
+  // Hours column: Left side
+  val hoursColumn = hourView
+  HBox.setHgrow(hoursColumn, Priority.Never)
 
   val fontSize = constants.windowWidth * 0.015
 
-  // Creates a new gridBox for weekdays
-  val weekDaysGridBox = new GridPane:
-    alignment = Pos.Center
-    hgap = 10
-    vgap = 10
+  // Days grid: right side
+  val daysGrid = new GridPane:
+    alignment = TopCenter
+    hgap = 5
+    vgap = 5
+    gridLinesVisible = true
 
   // Current date data
   val today = LocalDate.now
@@ -48,6 +49,9 @@ object weekView extends GridPane:
     "Sunday"
   )
 
+  // Map to store day columns
+  private val dayColumns = mutable.Map[String, VBox]()
+
   weekDays.zipWithIndex.foreach { case (day, columnIndex) =>
     // VBOX is a dayColumn
     val dayColumn = new VBox {
@@ -57,20 +61,36 @@ object weekView extends GridPane:
         "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;"
     }
 
-    // Label to name the day with a Montserrat font
+    // Label to name of the day
     val dayLabel = new Label(day):
       font =
         Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, fontSize)
       textOverrun = Clip
 
+    // Label to date of the day
+    val dateLabel = new Label(startOfWeek.plusDays(columnIndex).toString):
+      font =
+        Font.font("Montserrat", FontWeight.Light, constants.windowWidth * 0.01)
 
-    // ColumnConstraits helps to distribute space equally
-    val columnConstraints = new ColumnConstraints:
-      percentWidth = 100.0 / weekDays.size
+    //  Container for day and date
+    val headerBox = new VBox:
+      alignment = TopCenter
+      children = Seq(dayLabel, dateLabel)
 
-    this.columnConstraints.add(columnConstraints)
+    // Container with a scrollPane
+    val eventsContainer = new VBox:
+      spacing = 5
+      alignment = TopCenter
 
-    dayColumn.children.add(dayLabel)
+    // Allows the user to scroll the content
+    val scrollPane = new ScrollPane:
+      content = eventsContainer
+      fitToWidth = true
 
-    this.add(dayColumn, columnIndex, 0)
+    dayColumn.children = Seq(headerBox, scrollPane)
+    dayColumns(day) = eventsContainer
+    daysGrid.add(dayColumn, columnIndex, 0)
   }
+
+  // Adds components to main container
+  children = Seq(hoursColumn, daysGrid)

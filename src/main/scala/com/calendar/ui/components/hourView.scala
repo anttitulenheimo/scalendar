@@ -45,4 +45,5 @@ object hourView extends VBox:
 
       //Adds the hours
       children.add(hourContainer)
+      
 

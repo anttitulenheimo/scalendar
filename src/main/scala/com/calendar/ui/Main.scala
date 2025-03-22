@@ -1,12 +1,11 @@
 package com.calendar.ui
 
-import com.calendar.ui.components.{ hourView, weekView }
+import com.calendar.ui.components.weekView
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
-import scalafx.geometry.Pos.TopCenter
 import scalafx.scene.Scene
 import scalafx.scene.control.Label
-import scalafx.scene.layout.{ BorderPane, HBox, Priority, VBox }
+import scalafx.scene.layout.BorderPane
 import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
@@ -33,38 +32,10 @@ object Main extends JFXApp3:
           )
         }
 
-      val hourViewContainer = new VBox:
-        padding = Insets(constants.windowWidth * 0.01)
-        children += hourView
-        
-        
-      // Ensure hourView
-      HBox.setHgrow(hourViewContainer, Priority.Never)
-
-      // weekViewContainer
-      val weekViewContainer = new VBox:
-        prefHeight = constants.windowHeight * 0.5
-        alignment = TopCenter
-        children += weekView
-
-      // Allow weekView to grow
-      HBox.setHgrow(weekViewContainer, Priority.Always)
-
-      // Main container
-      val calendarContainer = new HBox:
-        spacing = constants.windowWidth * 0.02
-        padding = Insets(
-          constants.windowWidth * 0.02,
-          constants.windowWidth * 0.02,
-          constants.windowWidth * 0.02,
-          constants.windowWidth * 0.15
-        )
-        children ++= Seq(hourViewContainer, weekViewContainer)
-
-      val borderPane = new BorderPane { // Main pane
+      val borderPane = new BorderPane {
         padding = Insets(constants.windowWidth * 0.01)
         top = welcomeLabel
-        center = calendarContainer
+        center = weekView
       }
 
       scene = new Scene(borderPane)
@@ -72,5 +43,3 @@ object Main extends JFXApp3:
   end start
 
 end Main
-
-
