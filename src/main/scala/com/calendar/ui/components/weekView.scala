@@ -1,5 +1,6 @@
 package com.calendar.ui.components
 
+import com.calendar.models.Event
 import com.calendar.ui.constants
 import scalafx.geometry.Pos
 import scalafx.geometry.Pos.TopCenter
@@ -81,6 +82,7 @@ object weekView extends HBox:
     val eventsContainer = new VBox:
       spacing = 5
       alignment = TopCenter
+      minHeight = constants.windowHeight // TODO: Implement a better minHeight
 
     // Allows the user to scroll the content
     val scrollPane = new ScrollPane:
@@ -94,3 +96,9 @@ object weekView extends HBox:
 
   // Adds components to main container
   children = Seq(hoursColumn, daysGrid)
+
+  // TODO: Create a method to add a single event use eventDisplay for it
+  def addEvent(event: Event) = ???
+
+  // TODO: Create a method to add all events using the the addEvent
+  def addEvents(events: List[Event]) = ???
