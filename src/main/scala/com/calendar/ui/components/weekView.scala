@@ -12,6 +12,9 @@ import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 import java.time.*
 import scala.collection.mutable
 
+// TODO: Impelement a button which changes to the dailyView 
+
+
 object weekView extends HBox:
   spacing = 10
   alignment = TopCenter
