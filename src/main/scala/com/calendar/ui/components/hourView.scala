@@ -8,6 +8,8 @@ import scalafx.scene.shape.Line
 import scalafx.scene.text.{Font, FontPosture, FontWeight}
 import com.calendar.ui.constants
 
+
+// This class is useless so delete this when the project is done
 object hourView extends VBox:
   spacing = 10
   padding = Insets(constants.windowWidth * 0.01)
