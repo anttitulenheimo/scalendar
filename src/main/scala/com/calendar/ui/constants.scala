@@ -11,7 +11,7 @@ object constants {
   val windowWidth = screenBounds.width * 0.8 // Scaled
   val windowHeight = screenBounds.height * 0.8 // Scaled
   
-  val eventDefaultColor = Color.LightGreen
+  val eventDefaultColor = "#808080" // Grey
   
 
 }

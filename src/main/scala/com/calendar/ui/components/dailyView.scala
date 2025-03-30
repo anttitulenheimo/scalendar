@@ -35,11 +35,11 @@ object dailyView extends GridPane {
 
   // hourColumn to change the prefWidth
   val hourColumn = new ColumnConstraints() {
-    //prefWidth = constants.windowWidth
+    // prefWidth = constants.windowWidth
   }
   // eventColumn
   val eventColumn = new ColumnConstraints() {
-    //prefWidth = 40
+    // prefWidth = 40
   }
   // Adds all the columns
   this.getColumnConstraints.addAll(hourColumn, eventColumn)
@@ -48,7 +48,18 @@ object dailyView extends GridPane {
   def addEvents(events: Seq[Event]): Unit =
     events.foreach { event =>
       val eventBox = eventView.createEventDisplay(event)
+
       val startHour = event.startingTime.getHour
-      this.add(eventBox, 1, startHour)
+      val endHour = event.endingTime.getHour
+      val duration =
+        Math.max(1, endHour - startHour) // Duration in hours
+
+      this.add(
+        eventBox,
+        1,
+        startHour,
+        1,
+        duration
+      ) //def add(child: Node, columnIndex: Int, rowIndex: Int, colspan: Int, rowspan: Int): Unit
     }
 }

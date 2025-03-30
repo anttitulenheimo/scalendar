@@ -59,8 +59,8 @@ end Main
 val event1 = new Event(
   name = "Time to study",
   date = LocalDate.now(),
-  startingTime = LocalDateTime.now().plusHours(1),
-  endingTime = LocalDateTime.now().plusHours(2),
+  startingTime = LocalDateTime.of(2024, 3, 30, 12, 0), // 30. maaliskuuta 2024, klo 14:00
+  endingTime = LocalDateTime.of(2024, 3, 30, 13, 30),   // 30. maaliskuuta 2024, klo 16:00
   category = new Category("Study", "#FF0000"),
   reminder = new Reminder("Lunch", LocalDateTime.now().plusMinutes(30)),
   additionalInfo = Some("Eat at A-bloc"),
@@ -70,11 +70,11 @@ val event1 = new Event(
 val event2 = new Event(
   name = "Dancing with Team",
   date = LocalDate.now(),
-  startingTime = LocalDateTime.now().plusHours(4),
-  endingTime = LocalDateTime.now().plusHours(8),
+  startingTime = LocalDateTime.of(2024, 3, 30, 14, 0), // 30. maaliskuuta 2024, klo 14:00
+  endingTime = LocalDateTime.of(2024, 3, 30, 16, 0),   // 30. maaliskuuta 2024, klo 16:00
   category = new Category("Work", "#FF1111"),
   reminder = new Reminder("Meeting", LocalDateTime.now().plusMinutes(10)),
   additionalInfo = Some("Dance battle"),
-  colorCode = "#FF1111"
+  colorCode = "" // No colorcode given so the default code should be displayed
 )
 val eventSeq = Seq(event1, event2)
