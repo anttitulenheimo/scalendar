@@ -59,8 +59,8 @@ end Main
 val event1 = new Event(
   name = "Time to study",
   date = LocalDate.now(),
-  startingTime = LocalDateTime.of(2024, 3, 30, 12, 0), // 30. maaliskuuta 2024, klo 14:00
-  endingTime = LocalDateTime.of(2024, 3, 30, 13, 30),   // 30. maaliskuuta 2024, klo 16:00
+  startingTime = LocalDateTime.of(2024, 3, 30, 12, 0), // 30. maaliskuuta 2024, klo 12:00
+  endingTime = LocalDateTime.of(2024, 3, 30, 13, 30),   // 30. maaliskuuta 2024, klo 13:30
   category = new Category("Study", "#FF0000"),
   reminder = new Reminder("Lunch", LocalDateTime.now().plusMinutes(30)),
   additionalInfo = Some("Eat at A-bloc"),
