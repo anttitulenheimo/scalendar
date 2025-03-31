@@ -66,9 +66,6 @@ object dailyView extends ScrollPane {
         )
       }
 
-      if (hour == currentHour) then
-        style = "-fx-font-weight: bold; -fx-text-fill: #0000FF;"
-
       // def add(child: Node, columnIndex: Int, rowIndex: Int): Unit
       this.add(hourLabel, 0, hour * 60)
 
@@ -81,7 +78,7 @@ object dailyView extends ScrollPane {
     this.getColumnConstraints.addAll(hourColumn, eventColumn)
   }
 
-  // Move addEvents method outside the GridPane initialization block
+  // Adds all events to the calendar
   def addEvents(events: Seq[Event]): Unit =
     events.foreach { event =>
       val eventBox = eventView.createEventDisplay(event)
