@@ -101,5 +101,11 @@ object dailyView extends ScrollPane {
   content = dayGrid
   fitToWidth = true
   fitToHeight = false
-
+  style =
+    "-fx-background-color: transparent; " +
+    " -fx-padding: 10px; " +
+    " -fx-border-radius: 10px; " +
+    " -fx-border-color: #ccc; " +
+    " -fx-hbar-policy: never; " +  
+    " -fx-vbar-policy: always;"    
 }
