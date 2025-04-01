@@ -12,16 +12,11 @@ import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 import java.time.*
 import scala.collection.mutable
 
-// TODO: Impelement a button which changes to the dailyView 
+// TODO: Impelement a button which changes to the dailyView
 
-
-object weekView extends HBox:
+object weekView extends HBox {
   spacing = 10
   alignment = TopCenter
-
-  // Hours column: Left side
-  val hoursColumn = hourView
-  HBox.setHgrow(hoursColumn, Priority.Never)
 
   val fontSize = constants.windowWidth * 0.015
 
@@ -98,10 +93,18 @@ object weekView extends HBox:
   }
 
   // Adds components to main container
-  children = Seq(hoursColumn, daysGrid)
+  children = Seq(daysGrid)
 
-  // TODO: Create a method to add a single event use eventDisplay for it
-  def addEvent(event: Event) = ???
+  // Adds a single event: For the user to do
+  def addEvent(event: Event): Unit = {
+    val eventDisplay = eventView.createEventDisplay(event)
 
-  // TODO: Create a method to add all events using the the addEvent
-  def addEvents(events: List[Event]) = ???
+    val eventDay = event.date.getDayOfWeek.toString.toLowerCase.capitalize
+    dayColumns.get(eventDay).foreach(_.children.add(eventDisplay))
+  }
+
+  // Add all  the events
+  def addEvents(events: Seq[Event]): Unit = {
+    events.foreach(addEvent)
+  }
+}
