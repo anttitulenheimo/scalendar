@@ -34,9 +34,8 @@ object weekView extends HBox {
   val year = today.getYear
   val daysInThisMonth =
     YearMonth.of(year, month).lengthOfMonth()
-  val currentDayOfWeek =
-    today.getDayOfWeek.getValue % 7 // Returns an Int
-  val startOfWeek = today.minusDays(currentDayOfWeek)
+  //with sets the weekday name and date right
+  val startOfWeek = today.`with`(DayOfWeek.MONDAY)
 
   // a list of weekdays
   val weekDays = List(
@@ -63,7 +62,7 @@ object weekView extends HBox {
 
     // Label to name of the day
     val dayLabel = new Label(day):
-      //Bold for current day
+      // Bold for current day
       if (today == startOfWeek.plusDays(columnIndex)) then
         font = Font.font(
           "Montserrat",
@@ -82,7 +81,7 @@ object weekView extends HBox {
 
     // Label to date of the day
     val dateLabel = new Label(startOfWeek.plusDays(columnIndex).toString):
-      //Bold for current date
+      // Bold for current date
       if (today == startOfWeek.plusDays(columnIndex)) then
         font =
           Font.font("Montserrat", FontWeight.Bold, constants.windowWidth * 0.01)
