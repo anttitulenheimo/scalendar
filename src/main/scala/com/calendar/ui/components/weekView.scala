@@ -25,7 +25,7 @@ object weekView extends HBox {
     alignment = TopCenter
     hgap = constants.windowWidth * 0.01
 
-    gridLinesVisible = true
+    gridLinesVisible = false
 
   // Current date data
   val today = LocalDate.now
@@ -63,8 +63,6 @@ object weekView extends HBox {
     val dayColumn = new VBox {
       spacing = 10
       alignment = TopCenter
-      style =
-        "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;"
     }
 
     val date = startOfWeek.plusDays(columnIndex)

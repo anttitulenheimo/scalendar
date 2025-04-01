@@ -66,6 +66,8 @@ object Main extends JFXApp3:
       padding = Insets(constants.windowWidth * 0.01)
       top = welcomeLabel
       center = weekView
+      style =
+        "-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e4e8f0);"
     }
     // Returns weekViewScene
     new Scene(weekViewborderPane)
@@ -110,6 +112,8 @@ object Main extends JFXApp3:
       padding = Insets(constants.windowWidth * 0.01)
       top = headerContainer
       center = dailyView
+      style =
+        "-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e4e8f0);"
     }
     // Returns dailyViewScene
     new Scene(dailyViewborderPane)
