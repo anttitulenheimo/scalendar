@@ -92,31 +92,38 @@ object weekView extends HBox {
     val dateButton = new Button(startOfWeek.plusDays(columnIndex).toString):
       // Bold for current date
       if (today == date) then
-        font =
-          Font.font("Montserrat", FontWeight.Bold, constants.windowWidth * 0.01)
+        style = "-fx-background-color: #fff; " +
+          "-fx-border-radius: 24px; " +
+          "-fx-border-style: none; " +
+          "-fx-text-fill: #3c4043; " +
+          "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+          "-fx-font-size: 16px; " +  // Larger Font
+          "-fx-font-weight: bold; " + //
+          "-fx-pref-height: 48px; " +
+          "-fx-padding: 2px 24px; " +
+          "-fx-alignment: center; " +
+          "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+          "opacity 15ms linear 30ms, " +
+          "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+          "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .4), 5, 0, 0, 5);" // Different shadow
       else
-        font = Font.font(
-          "Montserrat",
-          FontWeight.Light,
-          constants.windowWidth * 0.01
-        )
+        style = "-fx-background-color: #fff; " +
+          "-fx-border-radius: 24px; " +
+          "-fx-border-style: none; " +
+          "-fx-text-fill: #3c4043; " +
+          "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+          "-fx-font-size: 14px; " +
+          "-fx-font-weight: normal; " +
+          "-fx-pref-height: 48px; " +
+          "-fx-padding: 2px 24px; " +
+          "-fx-alignment: center; " +
+          "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+          "opacity 15ms linear 30ms, " +
+          "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+          "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+
       // Handle click event
       onAction = event => onDaySelected(date)
-
-      style = "-fx-background-color: #fff; " +
-        "-fx-border-radius: 24px; " +
-        "-fx-border-style: none; " +
-        "-fx-text-fill: #3c4043; " +
-        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
-        "-fx-font-size: 14px; " +
-        "-fx-font-weight: 500; " +
-        "-fx-pref-height: 48px; " +
-        "-fx-padding: 2px 24px; " +
-        "-fx-alignment: center; " +
-        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
-        "opacity 15ms linear 30ms, " +
-        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
-        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
 
     val dateLabel = new Label(date.toString) {
       font =
