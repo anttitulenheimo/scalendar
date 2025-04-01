@@ -35,8 +35,7 @@ object Main extends JFXApp3:
       switchScenes(dailyViewScene)
     })
 
-
-    // TODO: Implement a way to add events to the correct days in dayView  
+    // TODO: Implement a way to add events to the correct days in dayView
     // Adds events to dailyView and to weekView
     dailyView.addEvents(eventSeq)
     weekView.addEvents(eventSeq)
@@ -83,6 +82,21 @@ object Main extends JFXApp3:
     // Back button for navigation
     val backButton = new Button("Back to Week View") {
       onAction = _ => switchScenes(createWeekViewScene(fontSize))
+      style = "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+        "opacity 15ms linear 30ms, " +
+        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+
     }
 
     // Add header container
