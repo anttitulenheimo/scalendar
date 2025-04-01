@@ -5,8 +5,8 @@ import com.calendar.ui.components.*
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.Label
-import scalafx.scene.layout.BorderPane
+import scalafx.scene.control.{ Button, Label }
+import scalafx.scene.layout.{ BorderPane, VBox }
 import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
@@ -14,43 +14,92 @@ import java.time.{ LocalDate, LocalDateTime }
 
 object Main extends JFXApp3:
 
-  def start() =
+  // Set the dateHeader to be NULL
+  private var dateHeader: Label = _
+
+  def start() = {
+
+    val fontSize = constants.windowWidth * 0.01
+
+    val weekViewScene: Scene = createWeekViewScene(fontSize)
+    val dailyViewScene: Scene = createDailyViewScene(fontSize)
+
+    // Set up day selection handler in weekView
+    weekView.setOnDaySelected(date => {
+      // Header is now day - date
+      val dateString =
+        s"${date.getDayOfWeek.toString.capitalize} - ${date.toString}"
+      dateHeader.text = dateString
+
+      // Switch to dailyView
+      switchScenes(dailyViewScene)
+    })
+
+
+    // TODO: Implement a way to add events to the correct days in dayView  
+    // Adds events to dailyView and to weekView
+    dailyView.addEvents(eventSeq)
+    weekView.addEvents(eventSeq)
 
     val primaryStage = new JFXApp3.PrimaryStage():
       title = "SCALENDAR - CALENDAR"
-
       width = constants.windowWidth
       height = constants.windowHeight
+      scene = weekViewScene
 
-      val fontSize = constants.windowWidth * 0.015
+    stage = primaryStage
+  }
 
-      // TODO: Make the welcome perhaps animated
-      val welcomeLabel =
-        new Label("Welcome to your calendar") { // ToDO Impelement a better name
-          textFill = Black
-          font = Font.font(
-            "Montserrat",
-            FontWeight.Light,
-            FontPosture.Regular,
-            fontSize
-          )
-        }
+  // Switches to the given scene
+  def switchScenes(scene: Scene): Unit =
+    stage.setScene(scene)
 
-      // Adds events to dailyView
-      dailyView.addEvents(eventSeq)
-      weekView.addEvents(eventSeq)
+  // Creates the weekViewScene
+  private def createWeekViewScene(fontSize: Double): Scene = {
+    val welcomeLabel = new Label("Welcome to your calendar") {
+      textFill = Black
+      font =
+        Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, fontSize)
+    }
 
-      //  Comments to test weekView or dailyVierw
-      val borderPane = new BorderPane {
-        padding = Insets(constants.windowWidth * 0.01)
-        // top = welcomeLabel
-        center = weekView
-        // center = dailyView
-      }
+    // Container for weekView
+    val weekViewborderPane = new BorderPane {
+      padding = Insets(constants.windowWidth * 0.01)
+      top = welcomeLabel
+      center = weekView
+    }
+    // Returns weekViewScene
+    new Scene(weekViewborderPane)
+  }
 
-      scene = new Scene(borderPane)
+  // Creates the dailyViewScene
+  private def createDailyViewScene(fontSize: Double): Scene = {
+    // Add date header for dailyView
+    dateHeader = new Label("") {
+      font = Font.font("Montserrat", FontWeight.Bold, fontSize * 1.5)
+      style = "-fx-padding: 10 0 10 0;"
+    }
 
-  end start
+    // Back button for navigation
+    val backButton = new Button("Back to Week View") {
+      onAction = _ => switchScenes(createWeekViewScene(fontSize))
+    }
+
+    // Add header container
+    val headerContainer = new VBox {
+      spacing = 10
+      children = Seq(backButton, dateHeader)
+    }
+
+    // Container for dailyView
+    val dailyViewborderPane = new BorderPane {
+      padding = Insets(constants.windowWidth * 0.01)
+      top = headerContainer
+      center = dailyView
+    }
+    // Returns dailyViewScene
+    new Scene(dailyViewborderPane)
+  }
 
 end Main
 
@@ -83,7 +132,7 @@ val event2 = new Event(
   colorCode = "" // No colorcode given so the default code should be displayed
 )
 
-val event3 = new Event(
+/*val event3 = new Event(
   name = "Project Presentation",
   date = LocalDate.of(2024, 3, 31), // 31. maaliskuuta 2024
   startingTime =
@@ -136,5 +185,5 @@ val event6 = new Event(
   colorCode = "#00FFFF"
 )
 
-val eventSeq = Seq(event1, event2, event3, event4, event5, event6)
-
+val eventSeq = Seq(event1, event2, event3, event4, event5, event6)*/
+val eventSeq = Seq(event1, event2)

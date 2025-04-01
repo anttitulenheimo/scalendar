@@ -1,13 +1,12 @@
 package com.calendar.ui.components
 
 import com.calendar.models.Event
-import com.calendar.ui.components.weekView.prefHeight
 import com.calendar.ui.constants
 import scalafx.geometry.Pos
 import scalafx.geometry.Pos.TopCenter
 import scalafx.scene.control.OverrunStyle.Clip
-import scalafx.scene.control.{ Label, ScrollPane }
-import scalafx.scene.layout.{ GridPane, HBox, Priority, VBox }
+import scalafx.scene.control.{ Button, Label, ScrollPane }
+import scalafx.scene.layout.{ GridPane, HBox, VBox }
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
 import java.time.*
@@ -34,7 +33,7 @@ object weekView extends HBox {
   val year = today.getYear
   val daysInThisMonth =
     YearMonth.of(year, month).lengthOfMonth()
-  //with sets the weekday name and date right
+  // with sets the weekday name and date right
   val startOfWeek = today.`with`(DayOfWeek.MONDAY)
 
   // a list of weekdays
@@ -51,6 +50,14 @@ object weekView extends HBox {
   // Map to store day columns
   private val dayColumns = mutable.Map[String, VBox]()
 
+  // Event handler for day button clicks
+  var onDaySelected: (LocalDate) => Unit = event => {}
+
+  // Method to set the day selection handler
+  def setOnDaySelected(handler: (LocalDate) => Unit): Unit = {
+    onDaySelected = handler
+  }
+
   weekDays.zipWithIndex.foreach { case (day, columnIndex) =>
     // VBOX is a dayColumn
     val dayColumn = new VBox {
@@ -60,10 +67,12 @@ object weekView extends HBox {
         "-fx-border-color: black; -fx-border-width: 2px; -fx-border-radius: 5px;"
     }
 
+    val date = startOfWeek.plusDays(columnIndex)
+
     // Label to name of the day
     val dayLabel = new Label(day):
       // Bold for current day
-      if (today == startOfWeek.plusDays(columnIndex)) then
+      if (today == date) then
         font = Font.font(
           "Montserrat",
           FontWeight.Bold,
@@ -80,9 +89,9 @@ object weekView extends HBox {
         textOverrun = Clip
 
     // Label to date of the day
-    val dateLabel = new Label(startOfWeek.plusDays(columnIndex).toString):
+    val dateButton = new Button(startOfWeek.plusDays(columnIndex).toString):
       // Bold for current date
-      if (today == startOfWeek.plusDays(columnIndex)) then
+      if (today == date) then
         font =
           Font.font("Montserrat", FontWeight.Bold, constants.windowWidth * 0.01)
       else
@@ -91,11 +100,27 @@ object weekView extends HBox {
           FontWeight.Light,
           constants.windowWidth * 0.01
         )
+        // Handle click event
+        onAction = event => onDaySelected(date)
+
+      style = "-fx-background-color: " +
+        "#c3c4c4, " +
+        "linear-gradient(#d6d6d6 50%, white 100%), " +
+        "radial-gradient(center 50% -40%, radius 200%, #e6e6e6 45%, rgba(230,230,230,0) 50%); " +
+        "-fx-background-radius: 30; " +
+        "-fx-background-insets: 0,1,1; " +
+        "-fx-text-fill: black; " +
+        "-fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 3, 0.0 , 0 , 1 );"
+
+    val dateLabel = new Label(date.toString) {
+      font =
+        Font.font("Montserrat", FontWeight.Light, constants.windowWidth * 0.01)
+    }
 
     //  Container for day and date
     val headerBox = new VBox:
       alignment = TopCenter
-      children = Seq(dayLabel, dateLabel)
+      children = Seq(dayLabel, dateButton)
 
     // Container with a scrollPane
     val eventsContainer = new VBox:

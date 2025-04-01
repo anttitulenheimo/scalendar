@@ -1,7 +1,6 @@
 package com.calendar.ui
 
 import scalafx.stage.Screen
-import scalafx.scene.paint.Color
 //Constants object for the UI components to use
 
 object constants {
