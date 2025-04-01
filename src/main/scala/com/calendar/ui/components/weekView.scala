@@ -1,6 +1,7 @@
 package com.calendar.ui.components
 
 import com.calendar.models.Event
+import com.calendar.ui.components.weekView.prefHeight
 import com.calendar.ui.constants
 import scalafx.geometry.Pos
 import scalafx.geometry.Pos.TopCenter
@@ -20,11 +21,11 @@ object weekView extends HBox {
 
   val fontSize = constants.windowWidth * 0.015
 
-  // Days grid: right side
+  // Days grid
   val daysGrid = new GridPane:
     alignment = TopCenter
-    hgap = 5
-    vgap = 5
+    hgap = constants.windowWidth * 0.01
+
     gridLinesVisible = true
 
   // Current date data
@@ -62,14 +63,35 @@ object weekView extends HBox {
 
     // Label to name of the day
     val dayLabel = new Label(day):
-      font =
-        Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, fontSize)
-      textOverrun = Clip
+      //Bold for current day
+      if (today == startOfWeek.plusDays(columnIndex)) then
+        font = Font.font(
+          "Montserrat",
+          FontWeight.Bold,
+          FontPosture.Regular,
+          fontSize
+        )
+      else
+        font = Font.font(
+          "Montserrat",
+          FontWeight.Light,
+          FontPosture.Regular,
+          fontSize
+        )
+        textOverrun = Clip
 
     // Label to date of the day
     val dateLabel = new Label(startOfWeek.plusDays(columnIndex).toString):
-      font =
-        Font.font("Montserrat", FontWeight.Light, constants.windowWidth * 0.01)
+      //Bold for current date
+      if (today == startOfWeek.plusDays(columnIndex)) then
+        font =
+          Font.font("Montserrat", FontWeight.Bold, constants.windowWidth * 0.01)
+      else
+        font = Font.font(
+          "Montserrat",
+          FontWeight.Light,
+          constants.windowWidth * 0.01
+        )
 
     //  Container for day and date
     val headerBox = new VBox:
@@ -78,9 +100,9 @@ object weekView extends HBox {
 
     // Container with a scrollPane
     val eventsContainer = new VBox:
-      spacing = 5
+      spacing = constants.windowWidth * 0.005
       alignment = TopCenter
-      minHeight = constants.windowHeight // TODO: Implement a better minHeight
+      prefHeight = constants.windowHeight * 0.8
 
     // Allows the user to scroll the content
     val scrollPane = new ScrollPane:
@@ -90,6 +112,7 @@ object weekView extends HBox {
     dayColumn.children = Seq(headerBox, scrollPane)
     dayColumns(day) = eventsContainer
     daysGrid.add(dayColumn, columnIndex, 0)
+
   }
 
   // Adds components to main container
