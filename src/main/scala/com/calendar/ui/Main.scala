@@ -51,7 +51,7 @@ object Main extends JFXApp3:
       switchScenes(dailyViewScene)
     })
 
-    // TODO: Implement a way to add events to the correct days in dayView
+
     // Adds events to dailyView and to weekView
     dailyView.addEvents(eventSeq)
     weekView.addEvents(eventSeq)

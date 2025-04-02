@@ -137,6 +137,7 @@ object weekView extends HBox {
       spacing = constants.windowWidth * 0.005
       alignment = TopCenter
       prefHeight = constants.windowHeight * 0.8
+      prefWidth = constants.windowWidth* 0.1
 
     // Allows the user to scroll the content
     val scrollPane = new ScrollPane:
