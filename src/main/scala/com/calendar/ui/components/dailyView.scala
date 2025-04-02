@@ -98,14 +98,26 @@ object dailyView extends ScrollPane {
       dayGrid.add(eventBox, 1, startRow, 1, rowSpan)
     }
 
+  // Method  for the setOnDaySelected: 
+  // Removes all event displays from the grid and keep only hour labels and lines
+  def clearEvents(): Unit = {
+ 
+    val children = dayGrid.children
+    val toKeep = children.filter(node =>
+      node.isInstanceOf[javafx.scene.control.Label] ||
+      node.isInstanceOf[javafx.scene.shape.Line]
+    )
+    dayGrid.children.clear()
+    dayGrid.children.addAll(toKeep)
+  }
+
   content = dayGrid
   fitToWidth = true
   fitToHeight = false
-  style =
-    "-fx-background-color: transparent; " +
+  style = "-fx-background-color: transparent; " +
     " -fx-padding: 10px; " +
     " -fx-border-radius: 10px; " +
     " -fx-border-color: #ccc; " +
-    " -fx-hbar-policy: never; " +  
-    " -fx-vbar-policy: always;"    
+    " -fx-hbar-policy: never; " +
+    " -fx-vbar-policy: always;"
 }

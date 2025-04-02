@@ -12,8 +12,6 @@ import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 import java.time.*
 import scala.collection.mutable
 
-// TODO: Impelement a button which changes to the dailyView
-
 object weekView extends HBox {
   spacing = 10
   alignment = TopCenter
@@ -95,7 +93,7 @@ object weekView extends HBox {
           "-fx-border-style: none; " +
           "-fx-text-fill: #3c4043; " +
           "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
-          "-fx-font-size: 16px; " +  // Larger Font
+          "-fx-font-size: 16px; " + // Larger Font
           "-fx-font-weight: bold; " + //
           "-fx-pref-height: 48px; " +
           "-fx-padding: 2px 24px; " +
@@ -153,16 +151,29 @@ object weekView extends HBox {
   // Adds components to main container
   children = Seq(daysGrid)
 
-  // Adds a single event: For the user to do
-  def addEvent(event: Event): Unit = {
-    val eventDisplay = eventView.createEventDisplay(event)
+  // Adds a single event
+  def addEvent(event: Event) =
+    val eventDate = event.startingTime.toLocalDate
+    val endOfWeek = startOfWeek.plusDays(6)
 
-    val eventDay = event.date.getDayOfWeek.toString.toLowerCase.capitalize
-    dayColumns.get(eventDay).foreach(_.children.add(eventDisplay))
-  }
+    // Check if event is in current weekView
+    // Compare: Compares this date to another date
+    if (
+      eventDate
+        .compareTo(startOfWeek) >= 0 && eventDate.compareTo(endOfWeek) <= 0
+    ) then
+      // Get day name from weekDays list
+      val dayIndex =
+        eventDate.getDayOfWeek.getValue - 1
+      val dayName = weekDays(dayIndex)
+
+      // Add event to the column
+      dayColumns.get(dayName).foreach { column =>
+        column.children.add(eventView.createEventDisplay(event))
+      }
 
   // Add all  the events
-  def addEvents(events: Seq[Event]): Unit = {
+  def addEvents(events: Seq[Event]) =
     events.foreach(addEvent)
-  }
+
 }
