@@ -1,21 +1,22 @@
 package com.calendar.ui
 
-import com.calendar.models.{ Category, Event, Reminder }
+import com.calendar.models.{Category, Event, Reminder}
 import com.calendar.ui.components.*
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.{ Button, Label }
-import scalafx.scene.layout.{ BorderPane, VBox }
+import scalafx.scene.control.{Button, Label}
+import scalafx.scene.layout.{BorderPane, VBox}
 import scalafx.scene.paint.Color.*
-import scalafx.scene.text.{ Font, FontPosture, FontWeight }
+import scalafx.scene.text.{Font, FontPosture, FontWeight}
 
-import java.time.{ LocalDate, LocalDateTime }
+import java.time.{LocalDate, LocalDateTime}
+import scala.compiletime.uninitialized
 
 object Main extends JFXApp3:
 
   // Set the dateHeader to be NULL
-  private var dateHeader: Label = _
+  private var dateHeader: Label = uninitialized
 
   def start() = {
 
@@ -65,7 +66,7 @@ object Main extends JFXApp3:
   }
 
   // Switches to the given scene
-  def switchScenes(scene: Scene): Unit =
+  def switchScenes(scene: Scene) =
     stage.setScene(scene)
 
   // Creates the weekViewScene
@@ -98,7 +99,7 @@ object Main extends JFXApp3:
 
     // Back button for navigation
     val backButton = new Button("Back to Week View") {
-      onAction = _ => switchScenes(createWeekViewScene(fontSize))
+      onAction = event => switchScenes(createWeekViewScene(fontSize))
       style = "-fx-background-color: #fff; " +
         "-fx-border-radius: 24px; " +
         "-fx-border-style: none; " +

@@ -23,6 +23,7 @@ object weekView extends HBox {
     alignment = TopCenter
     hgap = constants.windowWidth * 0.01
 
+
     gridLinesVisible = false
 
   // Current date data

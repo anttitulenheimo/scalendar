@@ -66,7 +66,7 @@ object dailyView extends ScrollPane {
         )
       }
 
-      // def add(child: Node, columnIndex: Int, rowIndex: Int): Unit
+      
       this.add(hourLabel, 0, hour * 60)
 
     // hourColumn
@@ -79,7 +79,7 @@ object dailyView extends ScrollPane {
   }
 
   // Adds all events to the calendar
-  def addEvents(events: Seq[Event]): Unit =
+  def addEvents(events: Seq[Event]) =
     events.foreach { event =>
       val eventBox = eventView.createEventDisplay(event)
 
@@ -98,18 +98,18 @@ object dailyView extends ScrollPane {
       dayGrid.add(eventBox, 1, startRow, 1, rowSpan)
     }
 
-  // Method  for the setOnDaySelected: 
+  // Method  for the setOnDaySelected:
   // Removes all event displays from the grid and keep only hour labels and lines
-  def clearEvents(): Unit = {
- 
+  def clearEvents() =
+
     val children = dayGrid.children
-    val toKeep = children.filter(node =>
+    val toKeep = children.filter(node => // The nodes should be either labels or lines
       node.isInstanceOf[javafx.scene.control.Label] ||
       node.isInstanceOf[javafx.scene.shape.Line]
     )
     dayGrid.children.clear()
     dayGrid.children.addAll(toKeep)
-  }
+
 
   content = dayGrid
   fitToWidth = true
