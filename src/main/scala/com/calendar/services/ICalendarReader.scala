@@ -46,7 +46,7 @@ class ICalendarReader(filename: String) {
         val vEventDescription = Option(vEvent.getDescription).map(_.getValue)
 
         // Use the default category
-        val vEventCategory = new Category("default", "#808080")
+        val vEventCategory = new Category("", "#808080")
 
         val vEventReminder = new Reminder(vEventname, vEventStartingTime)
 
