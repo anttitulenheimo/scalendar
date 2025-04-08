@@ -1,17 +1,19 @@
 package com.calendar.ui
 
-import com.calendar.models.{Category, Event, Reminder}
+import com.calendar.models.{ Category, Event, Reminder }
 import com.calendar.ui.components.*
 import com.calendar.services.Calendar
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.{Button, Label}
-import scalafx.scene.layout.{BorderPane, VBox}
+import scalafx.scene.control.{ Button, Label }
+import scalafx.scene.layout.{ BorderPane, VBox, HBox }
 import scalafx.scene.paint.Color.*
-import scalafx.scene.text.{Font, FontPosture, FontWeight}
+import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.temporal.IsoFields
+import java.time.{ DayOfWeek, LocalDate, LocalDateTime }
+import javax.print.attribute.standard.MediaSize.ISO
 import scala.compiletime.uninitialized
 
 object Main extends JFXApp3:
@@ -23,8 +25,13 @@ object Main extends JFXApp3:
   private val calendar = new Calendar(Map(), Map(), Map())
 
   // Load events from ICS file
-  private val eventSeq = calendar.loadFromFile("src/main/resources/myCalendar.ics")
+  private val eventSeq =
+    calendar.loadFromFile("src/main/resources/myCalendar.ics")
 
+  // TODO: Implement a way to preweek and nextweek in calendar
+  private val today = LocalDate.now
+  private val startOfWeek = today.`with`(DayOfWeek.MONDAY)
+  private val weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
   def start() = {
 
@@ -59,7 +66,6 @@ object Main extends JFXApp3:
       switchScenes(dailyViewScene)
     })
 
-
     // Adds events to dailyView and to weekView
     dailyView.addEvents(eventSeq)
     weekView.addEvents(eventSeq)
@@ -85,11 +91,56 @@ object Main extends JFXApp3:
         Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, fontSize)
     }
 
+    // Label for the weeknumber
+    val weekLabel = new Label("Week " + weekNumber.toString) {
+      font = Font.font("Montserrat", FontWeight.Medium, fontSize * 1.5)
+    }
+    // Button to navigate to previous week
+    val preWeekButton = new Button("◀") {
+      style = "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 40px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+        "opacity 15ms linear 30ms, " +
+        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    }
+    // Button to navigate to next week
+    val nextWeekButton = new Button("▶") {
+      style = "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 40px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+        "opacity 15ms linear 30ms, " +
+        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    }
+
+    val navigationContainer = new HBox {
+      spacing = 4
+      children = Seq(weekLabel, preWeekButton, nextWeekButton)
+    }
+
     // Container for weekView
     val weekViewborderPane = new BorderPane {
       padding = Insets(constants.windowWidth * 0.01)
       top = welcomeLabel
       center = weekView
+      right = navigationContainer
       style =
         "-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e4e8f0);"
     }
@@ -144,75 +195,3 @@ object Main extends JFXApp3:
   }
 
 end Main
-
-/*// Some already converted test events
-// .
-// .
-val event1 = new Event(
-  name = "Time to study",
-  date = LocalDate.of(2025, 3, 30),
-  startingTime = LocalDateTime.of(2025, 4, 7, 12, 0),
-  endingTime = LocalDateTime.of(2025, 4, 7, 13, 30),
-  category = new Category("Study", "#FF0000"),
-  reminder = new Reminder("Lunch", LocalDateTime.now().plusMinutes(30)),
-  additionalInfo = Some("Eat at A-bloc"),
-  colorCode = "#FF0000"
-)
-
-val event2 = new Event(
-  name = "Dancing with Team",
-  date = LocalDate.of(2025, 3, 30),
-  startingTime = LocalDateTime.of(2025, 4, 7, 14, 0),
-  endingTime = LocalDateTime.of(2025, 4, 7, 16, 0),
-  category = new Category("Work", "#FF1111"),
-  reminder = new Reminder("Meeting", LocalDateTime.now().plusMinutes(10)),
-  additionalInfo = Some("Dance battle"),
-  colorCode = "" // No colorcode given so the default code should be displayed
-)
-
-val event3 = new Event(
-  name = "Project Presentation",
-  date = LocalDate.of(2025, 3, 31),
-  startingTime = LocalDateTime.of(2025, 4, 8, 10, 0),
-  endingTime = LocalDateTime.of(2025, 4, 8, 11, 30),
-  category = new Category("Work", "#00FF00"),
-  reminder =
-    new Reminder("Prepare materials", LocalDateTime.now().plusMinutes(45)),
-  additionalInfo = Some("Prepare slides and presentation materials"),
-  colorCode = "#00FF00"
-)
-
-val event4 = new Event(
-  name = "Yoga Class",
-  date = LocalDate.of(2025, 4, 1),
-  startingTime = LocalDateTime.of(2025, 4, 9, 7, 30),
-  endingTime = LocalDateTime.of(2025, 4, 9, 8, 30),
-  category = new Category("Wellness", "#0000FF"),
-  reminder = new Reminder("Get ready", LocalDateTime.now().plusHours(1)),
-  additionalInfo = Some("Wear comfortable clothes"),
-  colorCode = "#0000FF"
-)
-
-val event5 = new Event(
-  name = "Lunch with Friends",
-  date = LocalDate.of(2025, 4, 2),
-  startingTime = LocalDateTime.of(2025, 4, 10, 12, 0),
-  endingTime = LocalDateTime.of(2025, 4, 10, 13, 0),
-  category = new Category("Social", "#FF8800"),
-  reminder = new Reminder("Time to leave", LocalDateTime.now().plusMinutes(20)),
-  additionalInfo = Some("Meet at the park for lunch"),
-  colorCode = "#FF8800"
-)
-
-val event6 = new Event(
-  name = "Evening Run",
-  date = LocalDate.of(2025, 4, 3),
-  startingTime = LocalDateTime.of(2025, 4, 10, 18, 0),
-  endingTime = LocalDateTime.of(2025, 4, 10, 19, 0),
-  category = new Category("Fitness", "#00FFFF"),
-  reminder = new Reminder("Get your gear", LocalDateTime.now().plusMinutes(10)),
-  additionalInfo = Some("Meet at the main entrance"),
-  colorCode = "#00FFFF"
-)
-
-val eventSeq = Seq(event1, event2, event3, event4, event5, event6)*/
