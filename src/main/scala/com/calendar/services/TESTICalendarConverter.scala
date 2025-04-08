@@ -7,7 +7,7 @@ object TESTICalendarConverter {
 
   @main def testProgram(): Unit =
 
-    // Some test events
+    /*    // Some test events
     // .
     // .
     val event1 = new Event(
@@ -38,5 +38,21 @@ object TESTICalendarConverter {
         List(event1, event2),
         "src/main/resources/myCalendar.ics"
       )
-    converter.writeToFile()
+    converter.writeToFile()*/
+
+    val testCalendar = new Calendar(Map(), Map(), Map())
+    val eventSeq =
+      testCalendar.loadFromFile("src/main/resources/myCalendar.ics")
+    eventSeq.foreach(event =>
+      println(event.name)
+      println(event.date)
+      println(event.startingTime)
+      println(event.endingTime)
+      println(event.category.name)
+      println(event.category.colorCode)
+      println(event.reminder.eventId)
+      println(event.reminder.remindAt)
+      println(event.additionalInfo)
+      println(event.colorCode)
+    )
 }

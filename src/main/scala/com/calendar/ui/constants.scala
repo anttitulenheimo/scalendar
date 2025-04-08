@@ -1,5 +1,6 @@
 package com.calendar.ui
 
+import com.calendar.models.Category
 import scalafx.stage.Screen
 //Constants object for the UI components to use
 
@@ -12,5 +13,6 @@ object constants {
   
   val eventDefaultColor = "#808080" // Grey
   
+  val defaultCategory = new Category("default", eventDefaultColor)
 
 }

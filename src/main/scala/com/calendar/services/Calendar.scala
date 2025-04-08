@@ -39,7 +39,12 @@ class Calendar(
       .toList
 
   // Load events from a file
-  def loadFromFile(filename: String): Unit = ???
+  // Returns the Seq for now
+  def loadFromFile(filename: String): Seq[Event] =
+    val icsReader = new ICalendarReader(filename)
+    val loadEvents = icsReader.readEvents()
+    loadEvents
+    
 
   // Save events to a file
   def saveToFile(filename: String): Unit =
