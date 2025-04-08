@@ -28,10 +28,15 @@ object Main extends JFXApp3:
   private val eventSeq =
     calendar.loadFromFile("src/main/resources/myCalendar.ics")
 
-  // TODO: Implement a way to preweek and nextweek in calendar
+  // TODO: Implement a way to navigate between preweek and nextweek in calendar
   private val today = LocalDate.now
   private val startOfWeek = today.`with`(DayOfWeek.MONDAY)
   private val weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+
+  // Handles the week navigation
+  private def navigateBetweenWeeks(amount: Int): Unit = ???
+  // Handles the refreshing a selected week
+  private def refreshWeekView(): Unit = ???
 
   def start() = {
 
