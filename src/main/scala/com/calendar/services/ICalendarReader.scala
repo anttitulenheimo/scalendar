@@ -50,6 +50,16 @@ class ICalendarReader(filename: String) {
 
         val vEventReminder = new Reminder(vEventname, vEventStartingTime)
 
+        // getProperty returns the Java Optional so we need to extract it using isPresent
+        val colorCodeOpt = Option(vEvent.getProperty("X-COLOR")).flatMap { javaOpt =>
+        if (javaOpt.isPresent) then
+          Some(javaOpt.get.getValue)
+        else
+          None
+        }
+        val vEventColorCode = colorCodeOpt.getOrElse("#808080")
+
+
         // Creates a new Event
         new Event(
           name = vEventname,
@@ -59,7 +69,7 @@ class ICalendarReader(filename: String) {
           category = vEventCategory,
           reminder = vEventReminder,
           additionalInfo = vEventDescription,
-          colorCode = "#808080"
+          colorCode = vEventColorCode
         )
       }.toSeq
     } catch {

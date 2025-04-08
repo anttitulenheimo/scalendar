@@ -16,7 +16,7 @@ class Event(
   val category: Category,
   val reminder: Reminder,
   val additionalInfo: Option[String],
-  val colorCode: String
+  var colorCode: String = "#808080"
 ) {
 
   // Add a reminder for the event

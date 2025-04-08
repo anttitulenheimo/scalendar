@@ -2,6 +2,7 @@ package com.calendar.ui
 
 import com.calendar.models.{Category, Event, Reminder}
 import com.calendar.ui.components.*
+import com.calendar.services.Calendar
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
@@ -17,6 +18,13 @@ object Main extends JFXApp3:
 
   // Set the dateHeader to be uninitialized
   private var dateHeader: Label = uninitialized
+
+  // Calendar instance to handle events
+  private val calendar = new Calendar(Map(), Map(), Map())
+
+  // Load events from ICS file
+  private val eventSeq = calendar.loadFromFile("src/main/resources/myCalendar.ics")
+
 
   def start() = {
 
@@ -137,7 +145,7 @@ object Main extends JFXApp3:
 
 end Main
 
-// Some already converted test events
+/*// Some already converted test events
 // .
 // .
 val event1 = new Event(
@@ -207,4 +215,4 @@ val event6 = new Event(
   colorCode = "#00FFFF"
 )
 
-val eventSeq = Seq(event1, event2, event3, event4, event5, event6)
+val eventSeq = Seq(event1, event2, event3, event4, event5, event6)*/

@@ -4,6 +4,7 @@ import com.calendar.models.Event
 import net.fortuna.ical4j.model.Calendar
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property._
+import net.fortuna.ical4j.model.property.XProperty
 import java.io.FileWriter
 import java.time.ZoneId
 
@@ -40,6 +41,9 @@ class ICalendarConverter(events: List[Event], filename: String) {
     vEvent.add(dtEnd)
     vEvent.add(new Summary(event.name))
     vEvent.add(new Description(event.additionalInfo.getOrElse("")))
+
+    val colorProp = new XProperty("X-COLOR", event.colorCode) // Extra properties are tagged with the "X"
+    vEvent.add(colorProp)
 
     // Add the created event to the calendar
     calendar.add(vEvent)
