@@ -227,7 +227,7 @@ object weekView extends HBox {
     val eventsContainer = new VBox:
       spacing = constants.windowWidth * 0.005
       alignment = TopCenter
-      prefHeight = constants.windowHeight * 0.8
+      prefHeight = constants.windowHeight * 0.78
       prefWidth = constants.windowWidth * 0.2
 
     // Allows the user to scroll the content
