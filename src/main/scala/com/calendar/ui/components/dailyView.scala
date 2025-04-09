@@ -42,14 +42,14 @@ object dailyView extends ScrollPane {
         endX = constants.windowWidth
         stroke = Color.LightGray
         strokeWidth = 0.5
-        style = "-fx-opacity: 0.7;"
+        this.setStyle("-fx-opacity: 0.7;")
       }
 
       // current hour line
       if (hour == currentHour) {
         hourLine.stroke = Color.web("#2980b9")
         hourLine.strokeWidth = 2.0
-        hourLine.style = "-fx-opacity: 1.0;"
+        hourLine.setStyle("-fx-opacity: 1.0;")
       }
 
       this.add(hourLine, 0, hour * 60, 2, 1)
@@ -66,7 +66,6 @@ object dailyView extends ScrollPane {
         )
       }
 
-      
       this.add(hourLabel, 0, hour * 60)
 
     // hourColumn
@@ -103,21 +102,23 @@ object dailyView extends ScrollPane {
   def clearEvents() =
 
     val children = dayGrid.children
-    val toKeep = children.filter(node => // The nodes should be either labels or lines
-      node.isInstanceOf[javafx.scene.control.Label] ||
-      node.isInstanceOf[javafx.scene.shape.Line]
-    )
+    val toKeep =
+      children.filter(node => // The nodes should be either labels or lines
+        node.isInstanceOf[javafx.scene.control.Label] ||
+          node.isInstanceOf[javafx.scene.shape.Line]
+      )
     dayGrid.children.clear()
     dayGrid.children.addAll(toKeep)
-
 
   content = dayGrid
   fitToWidth = true
   fitToHeight = false
-  style = "-fx-background-color: transparent; " +
-    " -fx-padding: 10px; " +
-    " -fx-border-radius: 10px; " +
-    " -fx-border-color: #ccc; " +
-    " -fx-hbar-policy: never; " +
-    " -fx-vbar-policy: always;"
+  this.setStyle(
+    "-fx-background-color: transparent; " +
+      " -fx-padding: 10px; " +
+      " -fx-border-radius: 10px; " +
+      " -fx-border-color: #ccc; " +
+      " -fx-hbar-policy: never; " +
+      " -fx-vbar-policy: always;"
+  )
 }

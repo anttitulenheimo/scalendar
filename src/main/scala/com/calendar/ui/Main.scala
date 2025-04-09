@@ -30,13 +30,25 @@ object Main extends JFXApp3:
 
   // TODO: Implement a way to navigate between preweek and nextweek in calendar
   private val today = LocalDate.now
-  private val startOfWeek = today.`with`(DayOfWeek.MONDAY)
-  private val weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+  private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
+  private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
   // Handles the week navigation
-  private def navigateBetweenWeeks(amount: Int): Unit = ???
+  private def navigateBetweenWeeks(amount: Int): Unit =
+    // Adds 1 or -1 weeks
+    startOfWeek = startOfWeek.plusWeeks(amount)
+    // Updates weekNumber
+    weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+    // Refresh the weekView
+    refreshWeekView()
+    // Creates a new weekViewScene and switches scenes
+    switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
+
   // Handles the refreshing a selected week
-  private def refreshWeekView(): Unit = ???
+  private def refreshWeekView(): Unit =
+    weekView.clearEvents()
+    weekView.weekViewDatesRefresher(startOfWeek)
+    weekView.addEvents(eventSeq)
 
   def start() = {
 
@@ -92,8 +104,12 @@ object Main extends JFXApp3:
   private def createWeekViewScene(fontSize: Double): Scene = {
     val welcomeLabel = new Label("Welcome to your calendar") {
       textFill = Black
-      font =
-        Font.font("Montserrat", FontWeight.Light, FontPosture.Regular, fontSize)
+      font = Font.font(
+        "Montserrat",
+        FontWeight.Light,
+        FontPosture.Italic,
+        fontSize * 0.7
+      )
     }
 
     // Label for the weeknumber
@@ -102,39 +118,45 @@ object Main extends JFXApp3:
     }
     // Button to navigate to previous week
     val preWeekButton = new Button("◀") {
-      style = "-fx-background-color: #fff; " +
-        "-fx-border-radius: 24px; " +
-        "-fx-border-style: none; " +
-        "-fx-text-fill: #3c4043; " +
-        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
-        "-fx-font-size: 14px; " +
-        "-fx-font-weight: 500; " +
-        "-fx-pref-height: 40px; " +
-        "-fx-padding: 2px 24px; " +
-        "-fx-alignment: center; " +
-        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
-        "opacity 15ms linear 30ms, " +
-        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
-        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      onAction = event => navigateBetweenWeeks(-1)
+      this.setStyle(
+        "-fx-background-color: #fff; " +
+          "-fx-border-radius: 24px; " +
+          "-fx-border-style: none; " +
+          "-fx-text-fill: #3c4043; " +
+          "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+          "-fx-font-size: 14px; " +
+          "-fx-font-weight: 500; " +
+          "-fx-pref-height: 40px; " +
+          "-fx-padding: 2px 24px; " +
+          "-fx-alignment: center; " +
+          "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+          "opacity 15ms linear 30ms, " +
+          "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+          "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      )
     }
     // Button to navigate to next week
     val nextWeekButton = new Button("▶") {
-      style = "-fx-background-color: #fff; " +
-        "-fx-border-radius: 24px; " +
-        "-fx-border-style: none; " +
-        "-fx-text-fill: #3c4043; " +
-        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
-        "-fx-font-size: 14px; " +
-        "-fx-font-weight: 500; " +
-        "-fx-pref-height: 40px; " +
-        "-fx-padding: 2px 24px; " +
-        "-fx-alignment: center; " +
-        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
-        "opacity 15ms linear 30ms, " +
-        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
-        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      onAction = event => navigateBetweenWeeks(+1)
+      this.setStyle(
+        "-fx-background-color: #fff; " +
+          "-fx-border-radius: 24px; " +
+          "-fx-border-style: none; " +
+          "-fx-text-fill: #3c4043; " +
+          "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+          "-fx-font-size: 14px; " +
+          "-fx-font-weight: 500; " +
+          "-fx-pref-height: 40px; " +
+          "-fx-padding: 2px 24px; " +
+          "-fx-alignment: center; " +
+          "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+          "opacity 15ms linear 30ms, " +
+          "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+          "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      )
     }
-
+    // Contains buttons to navigate between weeks
     val navigationContainer = new HBox {
       spacing = 4
       children = Seq(weekLabel, preWeekButton, nextWeekButton)
@@ -146,8 +168,9 @@ object Main extends JFXApp3:
       top = welcomeLabel
       center = weekView
       right = navigationContainer
-      style =
+      this.setStyle(
         "-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e4e8f0);"
+      )
     }
     // Returns weekViewScene
     new Scene(weekViewborderPane)
@@ -158,26 +181,28 @@ object Main extends JFXApp3:
     // Add date header for dailyView
     dateHeader = new Label("") {
       font = Font.font("Montserrat", FontWeight.Bold, fontSize * 1.5)
-      style = "-fx-padding: 10 0 10 0;"
+      this.setStyle("-fx-padding: 10 0 10 0;")
     }
 
     // Back button for navigation
     val backButton = new Button("Back to Week View") {
       onAction = event => switchScenes(createWeekViewScene(fontSize))
-      style = "-fx-background-color: #fff; " +
-        "-fx-border-radius: 24px; " +
-        "-fx-border-style: none; " +
-        "-fx-text-fill: #3c4043; " +
-        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
-        "-fx-font-size: 14px; " +
-        "-fx-font-weight: 500; " +
-        "-fx-pref-height: 48px; " +
-        "-fx-padding: 2px 24px; " +
-        "-fx-alignment: center; " +
-        "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
-        "opacity 15ms linear 30ms, " +
-        "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
-        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      this.setStyle(
+        "-fx-background-color: #fff; " +
+          "-fx-border-radius: 24px; " +
+          "-fx-border-style: none; " +
+          "-fx-text-fill: #3c4043; " +
+          "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+          "-fx-font-size: 14px; " +
+          "-fx-font-weight: 500; " +
+          "-fx-pref-height: 48px; " +
+          "-fx-padding: 2px 24px; " +
+          "-fx-alignment: center; " +
+          "-fx-transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), " +
+          "opacity 15ms linear 30ms, " +
+          "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
+          "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+      )
 
     }
 
@@ -192,8 +217,9 @@ object Main extends JFXApp3:
       padding = Insets(constants.windowWidth * 0.01)
       top = headerContainer
       center = dailyView
-      style =
+      this.setStyle(
         "-fx-background-color: linear-gradient(to bottom, #f5f7fa, #e4e8f0);"
+      )
     }
     // Returns dailyViewScene
     new Scene(dailyViewborderPane)
