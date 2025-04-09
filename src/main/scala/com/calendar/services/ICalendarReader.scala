@@ -46,19 +46,17 @@ class ICalendarReader(filename: String) {
         val vEventDescription = Option(vEvent.getDescription).map(_.getValue)
 
         // Use the default category
-        val vEventCategory = new Category("", "#808080")
+        val vEventCategory = new Category("", "#A0B8D9")
 
         val vEventReminder = new Reminder(vEventname, vEventStartingTime)
 
         // getProperty returns the Java Optional so we need to extract it using isPresent
-        val colorCodeOpt = Option(vEvent.getProperty("X-COLOR")).flatMap { javaOpt =>
-        if (javaOpt.isPresent) then
-          Some(javaOpt.get.getValue)
-        else
-          None
+        val colorCodeOpt = Option(vEvent.getProperty("X-COLOR")).flatMap {
+          javaOpt =>
+            if (javaOpt.isPresent) then Some(javaOpt.get.getValue)
+            else None
         }
-        val vEventColorCode = colorCodeOpt.getOrElse("#808080")
-
+        val vEventColorCode = colorCodeOpt.getOrElse("#A0B8D9")
 
         // Creates a new Event
         new Event(
@@ -90,14 +88,20 @@ class ICalendarReader(filename: String) {
     date match
       case z: java.time.ZonedDateTime =>
         z.toLocalDateTime
+
       case d: net.fortuna.ical4j.model.DateTime =>
         val instant = d.toInstant
         val zone = ZoneId.systemDefault()
         LocalDateTime.ofInstant(instant, zone)
+
       case d: java.util.Date =>
         val instant = d.toInstant
         val zone = ZoneId.systemDefault()
         LocalDateTime.ofInstant(instant, zone)
+
+      case d: java.time.LocalDate =>
+        d.atStartOfDay()
+
       case e =>
         throw new IllegalArgumentException(
           s"Unsupported dateType: ${e.getClass.getName}"

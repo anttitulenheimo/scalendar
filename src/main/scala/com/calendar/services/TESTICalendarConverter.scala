@@ -10,6 +10,7 @@ object TESTICalendarConverter {
     // Some test events
     // .
     // .
+/*
   val event1 = new Event(
     name = "Time to study",
     date = LocalDate.of(2025, 4, 2),
@@ -84,6 +85,7 @@ object TESTICalendarConverter {
       "src/main/resources/myCalendar.ics"
     )
   converter.writeToFile()
+*/
 
     val testCalendar = new Calendar(Map(), Map(), Map())
     val eventSeq =

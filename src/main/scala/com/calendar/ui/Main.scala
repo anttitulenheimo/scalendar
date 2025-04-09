@@ -24,9 +24,16 @@ object Main extends JFXApp3:
   // Calendar instance to handle events
   private val calendar = new Calendar(Map(), Map(), Map())
 
-  // Load events from ICS file
-  private val eventSeq =
+  // Load public holidays
+  private val eventSeqPublicHolidays =
+    calendar.loadFromFile("src/main/resources/finland.ics")
+
+  // Load own events
+  private val eventSeqMyCalendar =
     calendar.loadFromFile("src/main/resources/myCalendar.ics")
+
+
+  val allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
 
   private val today = LocalDate.now
   private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
@@ -47,7 +54,7 @@ object Main extends JFXApp3:
   private def refreshWeekView(): Unit =
     weekView.clearEvents()
     weekView.weekViewDatesRefresher(startOfWeek)
-    weekView.addEvents(eventSeq)
+    weekView.addEvents(allEvents)
 
   def start() = {
 
@@ -67,7 +74,7 @@ object Main extends JFXApp3:
       dateHeader.text = dateString
 
       // Filter based on startingTime
-      val eventsForDay = eventSeq.filter(event => {
+      val eventsForDay = allEvents.filter(event => {
         // Check if event's startTime date matches selected date
         val startTimeDate = event.startingTime.toLocalDate
         val matches =
@@ -86,8 +93,8 @@ object Main extends JFXApp3:
     })
 
     // Adds events to dailyView and to weekView
-    dailyView.addEvents(eventSeq)
-    weekView.addEvents(eventSeq)
+    dailyView.addEvents(allEvents)
+    weekView.addEvents(allEvents)
 
     val primaryStage = new JFXApp3.PrimaryStage():
       title = "SCALENDAR - CALENDAR"
