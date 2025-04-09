@@ -28,7 +28,6 @@ object Main extends JFXApp3:
   private val eventSeq =
     calendar.loadFromFile("src/main/resources/myCalendar.ics")
 
-  // TODO: Implement a way to navigate between preweek and nextweek in calendar
   private val today = LocalDate.now
   private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
   private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
@@ -51,6 +50,9 @@ object Main extends JFXApp3:
     weekView.addEvents(eventSeq)
 
   def start() = {
+
+    // TODO: Create addEventButton
+    val addEventButton = new Button("Add Event") {}
 
     val fontSize = constants.windowWidth * 0.01
 

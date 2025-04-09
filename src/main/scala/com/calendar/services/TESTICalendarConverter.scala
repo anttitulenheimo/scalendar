@@ -35,8 +35,8 @@ object TESTICalendarConverter {
   val event3 = new Event(
     name = "Project Presentation",
     date = LocalDate.of(2025, 3, 31),
-    startingTime = LocalDateTime.of(2025, 4, 8, 10, 0),
-    endingTime = LocalDateTime.of(2025, 4, 8, 11, 30),
+    startingTime = LocalDateTime.of(2025, 4, 8, 17, 0),
+    endingTime = LocalDateTime.of(2025, 4, 8, 18, 30),
     category = new Category("Work", "#00FF00"),
     reminder =
       new Reminder("Prepare materials", LocalDateTime.now().plusMinutes(45)),
