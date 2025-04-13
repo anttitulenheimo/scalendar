@@ -20,17 +20,13 @@ object eventView {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
   private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-  // Helper method to convert to CSS color
-  def toCssColor(color: Color): String =
-    f"#${(color.red * 255).toInt}%02X${(color.green * 255).toInt}%02X${(color.blue * 255).toInt}%02X"
-
   // Creates an event display
   def createEventDisplay(event: Event): VBox = {
     // Tries to set a background color otherwise sets a default color
     val backgroundColor =
       Try(Color.web(event.colorCode)) match
         case Success(realColor) =>
-          toCssColor(realColor)
+          constants.toCssColor(realColor)
         case Failure(exception) =>
           constants.eventDefaultColor
 

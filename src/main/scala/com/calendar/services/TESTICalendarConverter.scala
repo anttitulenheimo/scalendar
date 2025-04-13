@@ -87,7 +87,7 @@ object TESTICalendarConverter {
   converter.writeToFile()
 */
 
-    val testCalendar = new Calendar(Map(), Map(), Map())
+    val testCalendar = new Calendar(Map(), Map(), Seq())
     val eventSeq =
       testCalendar.loadFromFile("src/main/resources/myCalendar.ics")
     eventSeq.foreach(event =>
@@ -97,8 +97,12 @@ object TESTICalendarConverter {
       println(event.endingTime)
       println(event.category.name)
       println(event.category.colorCode)
-      println(event.reminder.eventId)
-      println(event.reminder.remindAt)
+      event.reminder match
+        case Some(realReminder) =>        
+          println(realReminder.eventId)
+          println(realReminder.remindAt)
+        case _ =>
+          print("No reminder found")
       println(event.additionalInfo.getOrElse("No additional info"))
       println(event.colorCode)
     )

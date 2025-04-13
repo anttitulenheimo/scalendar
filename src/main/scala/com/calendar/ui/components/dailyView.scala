@@ -10,8 +10,8 @@ import scalafx.scene.shape.Line
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
 //Scrollpane to allow user to scroll the 24 hours view
-// The events finally show where they should
-// TODO: Implement a way to show the correct weekday on top of the screen
+
+
 object dailyView extends ScrollPane {
 
   // The grid is divided into minutes and the full hours are shown

@@ -10,7 +10,7 @@ class Calendar(
   var eventMap: Map[String, Event],
 
   // Categories which a specific calendar has
-  var categories: Map[String, Category]
+  var categories: Seq[Category]
 ) {
 
   // Add an event to the calendar
@@ -44,7 +44,6 @@ class Calendar(
     val icsReader = new ICalendarReader(filename)
     val loadEvents = icsReader.readEvents()
     loadEvents
-    
 
   // Save events to a file
   def saveToFile(filename: String): Unit =

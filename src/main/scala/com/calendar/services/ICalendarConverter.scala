@@ -42,6 +42,7 @@ class ICalendarConverter(events: List[Event], filename: String) {
     vEvent.add(new Summary(event.name))
     vEvent.add(new Description(event.additionalInfo.getOrElse("")))
 
+    // TODO: Add a reminder 
     val colorProp = new XProperty("X-COLOR", event.colorCode) // Extra properties are tagged with the "X"
     vEvent.add(colorProp)
 

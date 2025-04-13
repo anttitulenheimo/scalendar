@@ -48,7 +48,7 @@ class ICalendarReader(filename: String) {
         // Use the default category
         val vEventCategory = new Category("", "#A0B8D9")
 
-        val vEventReminder = new Reminder(vEventname, vEventStartingTime)
+        val vEventReminder = Some(new Reminder(vEventname, vEventStartingTime))
 
         // getProperty returns the Java Optional so we need to extract it using isPresent
         val colorCodeOpt = Option(vEvent.getProperty("X-COLOR")).flatMap {

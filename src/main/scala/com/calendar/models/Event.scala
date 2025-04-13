@@ -14,9 +14,9 @@ class Event(
   val startingTime: LocalDateTime,
   val endingTime: LocalDateTime,
   val category: Category,
-  val reminder: Reminder,
+  val reminder: Option[Reminder],
   val additionalInfo: Option[String],
-  var colorCode: String = "#808080"
+  var colorCode: String = "#808080" // a default color
 ) {
 
   // Add a reminder for the event
