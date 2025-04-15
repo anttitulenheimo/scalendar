@@ -34,8 +34,6 @@ import scala.util.{ Failure, Success, Try }
 import java.time.format.DateTimeFormatter
 import java.time.{ LocalDate, LocalDateTime, LocalTime }
 
-// TODO: Make possible for the events to last days 
-
 
 //The popup is a dialog box
 object addEventPopup {
@@ -65,9 +63,13 @@ object addEventPopup {
 
     // Event's date and time handling
     // Cretes a new datepicker to pick the date either writing or c hoosing from the mini calendar
-    val datePicker = new DatePicker(today)
-    grid.add(new Label("Date:"), 0, 0)
-    grid.add(datePicker, 1, 0)
+    val startDatePicker = new DatePicker(today)
+    val endingDatePicker = new DatePicker(today)
+
+    grid.add(new Label("Starting date:"), 0, 0)
+    grid.add(startDatePicker, 1, 0)
+    grid.add(new Label("Ending date:"), 2, 0)
+    grid.add(endingDatePicker, 3, 0)
     // The pattern to use with java.time.format
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
@@ -161,7 +163,8 @@ object addEventPopup {
       if (dialogButton == addButtonType) then
         try {
           val name = eventName.text().trim // Trim the excess spaces
-          val date = datePicker.value()
+          val startDate = startDatePicker.value()
+          val endDate = endingDatePicker.value()
 
           val startTimeLocal = LocalTime.parse(
             startingTimeTextField.text(),
@@ -171,15 +174,20 @@ object addEventPopup {
             LocalTime.parse(endingTimeTextField.text(), timeFormatter)
 
           val startDateTime = LocalDateTime.of(
-            date,
+            startDate,
             startTimeLocal
           ) // Converts LocalTime to LocalDateTime
-          val endDateTime = LocalDateTime.of(date, endTimeLocal)
+          val endDateTime = LocalDateTime.of(endDate, endTimeLocal)
 
-          // TODO: Events can last days so the Eventvalidator logic needs to be changed 
+
           // Use eventValidator to validate user inputs
           if (!EventValidator.validateTime(startDateTime, endDateTime)) then
-            ErrorDialog("End time must be after start time")
+            if (startDateTime.toLocalDate() != endDateTime.toLocalDate()) then
+              // Multi day event
+              ErrorDialog("End date must be after start date")
+            else
+              // Single day event
+              ErrorDialog("End time must be after start time")
             return null
 
           // Find selected category from categoryCombobox or take the default category
@@ -209,7 +217,7 @@ object addEventPopup {
           // Creates the new event after parsing
           new Event(
             name = name,
-            date = date,
+            date = startDate,
             startingTime = startDateTime,
             endingTime = endDateTime,
             category = selectedCategory,

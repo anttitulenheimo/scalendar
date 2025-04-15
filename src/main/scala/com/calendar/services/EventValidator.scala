@@ -14,9 +14,14 @@ object EventValidator {
       firstEvent.endingTime
     )) && (secondEvent.endingTime.isAfter(firstEvent.startingTime))
 
-  // Validate that the end time is after start time
+  // Validate that the end time is after start time and end date is after start date
   def validateTime(startTime: LocalDateTime, endTime: LocalDateTime): Boolean =
-    endTime.isAfter(startTime)
+    // Multi day events
+    if (startTime.toLocalDate() != endTime.toLocalDate()) then
+      !endTime.toLocalDate().isBefore(startTime.toLocalDate())
+    else
+      // Single day events
+      endTime.isAfter(startTime)
 
   // Validate that the input is correct (=The input is non-empty) and parsing works
   def validateInput(input: String, dateAndTime: String): Boolean =

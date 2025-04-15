@@ -9,8 +9,9 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.Line
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
-//Scrollpane to allow user to scroll the 24 hours view
+import java.time.{ LocalDate, LocalDateTime, LocalTime }
 
+//Scrollpane to allow user to scroll the 24 hours view
 
 object dailyView extends ScrollPane {
 
@@ -78,22 +79,46 @@ object dailyView extends ScrollPane {
   }
 
   // Adds all events to the calendar
-  def addEvents(events: Seq[Event]) =
+  def addEvents(events: Seq[Event], currentDate: LocalDate) =
     events.foreach { event =>
       val eventBox = eventView.createEventDisplay(event)
 
-      val startHour = event.startingTime.getHour
-      val startMinute = event.startingTime.getMinute
-      val endHour = event.endingTime.getHour
-      val endMinute = event.endingTime.getMinute
-
+      // Get event dates
+      val eventStartDate = event.startingTime.toLocalDate
+      val eventEndDate = event.endingTime.toLocalDate
+  
+      // Multiple day events handling
+  
+      // Adjusts start time if event begins before current day
+      val adjustedStartTime =
+        if (eventStartDate.isBefore(currentDate)) then
+          LocalDateTime.of(
+            currentDate,
+            LocalTime.MIN
+          ) // LocalTime.Min =  00:00 of current day
+        else event.startingTime
+  
+      // Adjusts end time if event ends after current day
+      val adjustedEndTime =
+        if (eventEndDate.isAfter(currentDate)) then
+          LocalDateTime.of(
+            currentDate,
+            LocalTime.MAX
+          ) // LocalTime.MAX = 23:59 of current day
+        else event.endingTime
+  
+      val startHour = adjustedStartTime.getHour
+      val startMinute = adjustedStartTime.getMinute
+      val endHour = adjustedEndTime.getHour
+      val endMinute = adjustedEndTime.getMinute
+  
       val startRow = startHour * 60 + startMinute // a minute index
       val endRow = endHour * 60 + endMinute
       val duration = endRow - startRow
-
+  
       // Validator for the rowSpan
       val rowSpan = Math.max(1, duration)
-
+  
       dayGrid.add(eventBox, 1, startRow, 1, rowSpan)
     }
 

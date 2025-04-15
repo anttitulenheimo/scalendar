@@ -1,6 +1,18 @@
-SCALENDER
+SCALENDER - CALENDAR
 
-Important links:
+
+
+
+
+
+
+
+
+
+Materials used for this project:
+
+scalafx documentation:
+https://scalafx.org/
 
 ical4j documentation:
 https://javadoc.io/doc/org.mnode.ical4j/ical4j/latest/ical4j.core/module-summary.html

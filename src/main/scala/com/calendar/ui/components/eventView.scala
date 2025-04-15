@@ -41,12 +41,26 @@ object eventView {
       font = Font.font("Montserrat", FontWeight.Bold, eventHeadingfontSize)
     }
 
-    // Displays timedata
-    val timeLabel = new Label(
-      s"${event.startingTime.format(timeFormatter)} - ${event.endingTime.format(timeFormatter)}"
-    ) {
-      font = Font.font("Montserrat", FontWeight.Light, eventNormalFont)
-    }
+    // Display time data
+    val timeLabel =
+      // Get the event dates
+      val eventStartDate = event.startingTime.toLocalDate
+      val eventEndDate = event.endingTime.toLocalDate
+
+      // Parse timedata
+      // Single day event
+      val timeText =
+        if (eventStartDate.equals(eventEndDate)) then
+          // Show times
+          s"${event.startingTime.format(timeFormatter)} - ${event.endingTime.format(timeFormatter)}"
+        else // Multi day event
+          // Show dates and times
+          s"${eventStartDate.format(dateFormatter)} - ${eventEndDate.format(dateFormatter)}\n" +
+            s"${event.startingTime.format(timeFormatter)} - ${event.endingTime.format(timeFormatter)}"
+
+      new Label(timeText) {
+        font = Font.font("Montserrat", FontWeight.Light, eventNormalFont)
+      }
 
     // Displays category name
     val categoryLabel = new Label(event.category.name) {

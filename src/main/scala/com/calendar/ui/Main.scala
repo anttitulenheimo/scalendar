@@ -1,20 +1,20 @@
 package com.calendar.ui
 
-import com.calendar.models.{ Category, Event, Reminder }
-import com.calendar.ui.components.*
+import com.calendar.models.{ Category, Event }
 import com.calendar.services.Calendar
+import com.calendar.ui.components.*
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
-import scalafx.scene.control.{ Button, Label }
-import scalafx.scene.layout.{ BorderPane, VBox, HBox }
+import scalafx.scene.SceneIncludes.jfxScene2sfx
+import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.{ Alert, Button, Label }
+import scalafx.scene.layout.{ BorderPane, HBox, VBox }
 import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
 import java.time.temporal.IsoFields
-import java.time.{ DayOfWeek, LocalDate, LocalDateTime }
-import scalafx.scene.SceneIncludes.jfxScene2sfx
-import javax.print.attribute.standard.MediaSize.ISO
+import java.time.{ DayOfWeek, LocalDate }
 import scala.compiletime.uninitialized
 
 object Main extends JFXApp3:
@@ -32,7 +32,40 @@ object Main extends JFXApp3:
     new Category("School", "#FFD700") // Yellow
   )
 
-  // TODO: Implement save button to save the event to file
+  private def createSaveButton(): Button = new Button("Save") {
+    onAction = event => 
+      // Temporary calendar for saving
+      val tempCal = new Calendar(Map(), Map(), defaultCategories)
+      // Filter the userEvents
+      val userEvents = allEvents.filterNot(eventSeqPublicHolidays.contains)
+      // Adds current events from eventSeqMyCalendar to the tempCal
+      userEvents.foreach(event => tempCal.addEvent(event))
+      // Uses tempCal's saveToFile method to save to myCalendar.ics
+      tempCal.saveToFile("src/main/resources/myCalendar.ics")
+      // Update eventSeq
+      eventSeqMyCalendar = userEvents
+      // Alerts that events were saved
+      new Alert(AlertType.Information) {
+        title = "Events saved"
+        headerText = "Calendar saved successfully"
+        contentText = s"${eventSeqMyCalendar.size} events saved"
+      }.showAndWait()
+    
+
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
 
   // Calendar instance to handle events
   private val calendar = new Calendar(Map(), Map(), defaultCategories)
@@ -42,7 +75,7 @@ object Main extends JFXApp3:
     calendar.loadFromFile("src/main/resources/finland.ics")
 
   // Load own events
-  private val eventSeqMyCalendar =
+  private var eventSeqMyCalendar =
     calendar.loadFromFile("src/main/resources/myCalendar.ics")
 
   var allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
@@ -68,7 +101,6 @@ object Main extends JFXApp3:
     weekView.weekViewDatesRefresher(startOfWeek)
     weekView.addEvents(allEvents)
 
-  // TODO: Create addEventButton
   private def createAddEventButton(): Button = new Button("Add Event") {
     onAction = event => {
       val result = addEventPopup.showDialog(stage, defaultCategories)
@@ -77,8 +109,9 @@ object Main extends JFXApp3:
         case Some(event: Event) => // If the event is type of Event
           // Adds the event to the calendar
           calendar.addEvent(event)
-          // TODO: Change the events to come str4 from the calendar not locally
+          // Updates
           allEvents = allEvents :+ event
+          eventSeqMyCalendar = eventSeqMyCalendar :+ event
 
           // Navigate to the week containing the new created event
           startOfWeek = event.date.`with`(DayOfWeek.MONDAY)
@@ -91,7 +124,7 @@ object Main extends JFXApp3:
             val eventsForDay =
               allEvents.filter(_.startingTime.toLocalDate == event.date)
             dailyView.clearEvents()
-            dailyView.addEvents(eventsForDay)
+            dailyView.addEvents(eventsForDay, event.date)
             // Refresh
             switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
 
@@ -121,7 +154,7 @@ object Main extends JFXApp3:
     val dailyViewScene: Scene = createDailyViewScene(fontSize)
 
     // Set up day selection handler in weekView
-    weekView.setOnDaySelected(date => {
+    weekView.setOnDaySelected(date =>
       // Header is now day - date
       val dateString =
         s"${date.getDayOfWeek.toString.capitalize} - ${date.toString}"
@@ -129,25 +162,24 @@ object Main extends JFXApp3:
 
       // Filter based on startingTime
       val eventsForDay = allEvents.filter(event => {
-        // Check if event's startTime date matches selected date
-        val startTimeDate = event.startingTime.toLocalDate
-        val matches =
-          startTimeDate.getYear == date.getYear &&
-            startTimeDate.getMonth == date.getMonth &&
-            startTimeDate.getDayOfMonth == date.getDayOfMonth
-        matches
+        // Get the start and end dates of the event
+        val eventStartDate = event.startingTime.toLocalDate
+        val eventEndDate = event.endingTime.toLocalDate
+        // Filters now if the date falls in the right range
+        (date.isEqual(eventStartDate) || date.isAfter(eventStartDate)) &&
+        (date.isEqual(eventEndDate) || date.isBefore(eventEndDate))
       })
 
       // Clears previous events and add filtered events
       dailyView.clearEvents()
-      dailyView.addEvents(eventsForDay)
+      dailyView.addEvents(eventsForDay, date)
 
       // Switch to dailyView
       switchScenes(dailyViewScene)
-    })
+    )
 
     // Adds events to dailyView and to weekView
-    dailyView.addEvents(allEvents)
+    dailyView.addEvents(allEvents, today)
     weekView.addEvents(allEvents)
 
     val primaryStage = new JFXApp3.PrimaryStage():
@@ -229,7 +261,7 @@ object Main extends JFXApp3:
     val weekViewborderPane = new BorderPane {
       padding = Insets(constants.windowWidth * 0.01)
       top = new HBox(10) {
-        children = Seq(welcomeLabel, createAddEventButton())
+        children = Seq(welcomeLabel, createAddEventButton(), createSaveButton())
       }
       center = weekView
       right = navigationContainer
@@ -274,7 +306,9 @@ object Main extends JFXApp3:
     val headerContainer = new VBox {
       spacing = 10
       children = Seq(
-        new HBox(10) { children = Seq(backButton, createAddEventButton()) },
+        new HBox(10) {
+          children = Seq(backButton, createAddEventButton(), createSaveButton())
+        },
         dateHeader
       )
     }

@@ -246,24 +246,35 @@ object weekView extends HBox {
 
   // Adds a single event
   def addEvent(event: Event) =
-    val eventDate = event.startingTime.toLocalDate
+    // Get event dates
+    val eventStartDate = event.startingTime.toLocalDate
+    val eventEndDate = event.endingTime.toLocalDate
     val endOfWeek = startOfWeek.plusDays(6)
 
-    // Check if event is in current weekView
-    // Compare: Compares this date to another date
+    // Compare: Compares starDates and endDates
     if (
-      eventDate
-        .compareTo(startOfWeek) >= 0 && eventDate.compareTo(endOfWeek) <= 0
+      (eventStartDate.compareTo(endOfWeek) <= 0) &&
+      (eventEndDate.compareTo(startOfWeek) >= 0)
     ) then
-      // Get day name from weekDays list
-      val dayIndex =
-        eventDate.getDayOfWeek.getValue - 1
-      val dayName = weekDays(dayIndex)
+      // Calculate which days of the week event should show
+      for dayRange <- 0 to 6 do
+        val currentDate = startOfWeek.plusDays(dayRange)
 
-      // Add event to the column
-      dayColumns.get(dayName).foreach { column =>
-        column.children.add(eventView.createEventDisplay(event))
-      }
+        // If current date is in event range then it is added
+        if (
+          (currentDate
+            .isEqual(eventStartDate) || currentDate.isAfter(eventStartDate)) &&
+          (currentDate
+            .isEqual(eventEndDate) || currentDate.isBefore(eventEndDate))
+        ) then
+          val dayName = weekDays(dayRange)
+
+          // Add event to the column
+          dayColumns
+            .get(dayName)
+            .foreach(column =>
+              column.children.add(eventView.createEventDisplay(event))
+            )
 
   // Add all  the events
   def addEvents(events: Seq[Event]) =
