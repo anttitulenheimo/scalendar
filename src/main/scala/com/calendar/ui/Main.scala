@@ -122,6 +122,29 @@ object Main extends JFXApp3:
   private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
   private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
+  // Button to navigate to this day
+  private def createTodayButton: Button = new Button("Today") {
+    onAction = event =>
+      startOfWeek = LocalDate.now.`with`(DayOfWeek.MONDAY)
+      weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+      refreshWeekView()
+      switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
+
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
   // Handles the week navigation
   private def navigateBetweenWeeks(amount: Int): Unit =
     // Adds 1 or -1 weeks
@@ -189,7 +212,8 @@ object Main extends JFXApp3:
       calendar.loadFromFile("src/main/resources/finland.ics")
 
     // Load user events
-    eventSeqMyCalendar = calendar.loadFromFile("src/main/resources/myCalendar.ics")
+    eventSeqMyCalendar =
+      calendar.loadFromFile("src/main/resources/myCalendar.ics")
 
     allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
 
@@ -310,7 +334,8 @@ object Main extends JFXApp3:
           welcomeLabel,
           createAddEventButton(),
           createSaveButton(),
-          createDeleteEventButton()
+          createDeleteEventButton(),
+          createTodayButton
         )
       }
       center = weekView
