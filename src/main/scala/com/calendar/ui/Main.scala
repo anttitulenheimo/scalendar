@@ -32,25 +32,64 @@ object Main extends JFXApp3:
     new Category("School", "#FFD700") // Yellow
   )
 
+  private def createDeleteEventButton(): Button = new Button("Delete") {
+    onAction = event =>
+      var allEvents = calendar.getAllEvents
+      if allEvents.nonEmpty then // No reason to delete if there is no events
+        val result = deleteEventPopup.showDialog(stage, allEvents)
+        result match
+          case Some(eventToDelete: Event) =>
+            if (calendar.deleteEvent(eventToDelete.name)) then
+              // Update the weekView and dailyView
+              weekView.clearEvents()
+              weekView.addEvents(calendar.getAllEvents)
+              dailyView.clearEvents()
+
+              // Update allEvents
+              allEvents = calendar.getAllEvents
+
+          case None =>
+
+      else
+        // Alert because no events
+        new Alert(AlertType.Information) {
+          title = "No events"
+          headerText = "No events to delete"
+        }.showAndWait()
+
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
   private def createSaveButton(): Button = new Button("Save") {
-    onAction = event => 
+    onAction = event =>
+      val allUserEvents =
+        calendar.getAllEvents.filterNot(eventSeqPublicHolidays.contains)
+      // Filter the userEvents
+      eventSeqMyCalendar = allUserEvents
       // Temporary calendar for saving
       val tempCal = new Calendar(Map(), Map(), defaultCategories)
-      // Filter the userEvents
-      val userEvents = allEvents.filterNot(eventSeqPublicHolidays.contains)
       // Adds current events from eventSeqMyCalendar to the tempCal
-      userEvents.foreach(event => tempCal.addEvent(event))
+      allUserEvents.foreach(event => tempCal.addEvent(event))
       // Uses tempCal's saveToFile method to save to myCalendar.ics
       tempCal.saveToFile("src/main/resources/myCalendar.ics")
-      // Update eventSeq
-      eventSeqMyCalendar = userEvents
       // Alerts that events were saved
       new Alert(AlertType.Information) {
         title = "Events saved"
         headerText = "Calendar saved successfully"
         contentText = s"${eventSeqMyCalendar.size} events saved"
       }.showAndWait()
-    
 
     this.setStyle(
       "-fx-background-color: #fff; " +
@@ -70,15 +109,14 @@ object Main extends JFXApp3:
   // Calendar instance to handle events
   private val calendar = new Calendar(Map(), Map(), defaultCategories)
 
-  // Load public holidays
-  private val eventSeqPublicHolidays =
-    calendar.loadFromFile("src/main/resources/finland.ics")
+  // Initialize empty seq
+  private var eventSeqPublicHolidays: Seq[Event] = Seq()
 
-  // Load own events
-  private var eventSeqMyCalendar =
-    calendar.loadFromFile("src/main/resources/myCalendar.ics")
+  // Initialize empty seq
+  private var eventSeqMyCalendar: Seq[Event] = Seq()
 
-  var allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
+  // Initialize empty seq
+  private var allEvents: Seq[Event] = Seq()
 
   private val today = LocalDate.now
   private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
@@ -102,7 +140,7 @@ object Main extends JFXApp3:
     weekView.addEvents(allEvents)
 
   private def createAddEventButton(): Button = new Button("Add Event") {
-    onAction = event => {
+    onAction = event =>
       val result = addEventPopup.showDialog(stage, defaultCategories)
 
       result match
@@ -129,8 +167,6 @@ object Main extends JFXApp3:
             switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
 
         case _ => // The add event was canceled
-    }
-
     this.setStyle(
       "-fx-background-color: #fff; " +
         "-fx-border-radius: 24px; " +
@@ -148,6 +184,15 @@ object Main extends JFXApp3:
 
   def start() = {
 
+    // Load public holidays
+    eventSeqPublicHolidays =
+      calendar.loadFromFile("src/main/resources/finland.ics")
+
+    // Load user events
+    eventSeqMyCalendar = calendar.loadFromFile("src/main/resources/myCalendar.ics")
+
+    allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
+
     val fontSize = constants.windowWidth * 0.01
 
     val weekViewScene: Scene = createWeekViewScene(fontSize)
@@ -161,14 +206,14 @@ object Main extends JFXApp3:
       dateHeader.text = dateString
 
       // Filter based on startingTime
-      val eventsForDay = allEvents.filter(event => {
+      val eventsForDay = allEvents.filter(event =>
         // Get the start and end dates of the event
         val eventStartDate = event.startingTime.toLocalDate
         val eventEndDate = event.endingTime.toLocalDate
         // Filters now if the date falls in the right range
         (date.isEqual(eventStartDate) || date.isAfter(eventStartDate)) &&
         (date.isEqual(eventEndDate) || date.isBefore(eventEndDate))
-      })
+      )
 
       // Clears previous events and add filtered events
       dailyView.clearEvents()
@@ -261,7 +306,12 @@ object Main extends JFXApp3:
     val weekViewborderPane = new BorderPane {
       padding = Insets(constants.windowWidth * 0.01)
       top = new HBox(10) {
-        children = Seq(welcomeLabel, createAddEventButton(), createSaveButton())
+        children = Seq(
+          welcomeLabel,
+          createAddEventButton(),
+          createSaveButton(),
+          createDeleteEventButton()
+        )
       }
       center = weekView
       right = navigationContainer
@@ -307,7 +357,12 @@ object Main extends JFXApp3:
       spacing = 10
       children = Seq(
         new HBox(10) {
-          children = Seq(backButton, createAddEventButton(), createSaveButton())
+          children = Seq(
+            backButton,
+            createAddEventButton(),
+            createSaveButton(),
+            createDeleteEventButton()
+          )
         },
         dateHeader
       )

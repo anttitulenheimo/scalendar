@@ -20,6 +20,7 @@ object eventView {
   private val dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
   private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
+  // TODO: Make events clickable and therefore implementing a possibility for event to be deleted 
   // Creates an event display
   def createEventDisplay(event: Event): VBox = {
     // Tries to set a background color otherwise sets a default color

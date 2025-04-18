@@ -43,6 +43,7 @@ class Calendar(
   def loadFromFile(filename: String): Seq[Event] =
     val icsReader = new ICalendarReader(filename)
     val loadEvents = icsReader.readEvents()
+    loadEvents.foreach(addEvent)
     loadEvents
 
   // Save events to a file

@@ -38,6 +38,7 @@ import java.time.{ LocalDate, LocalDateTime, LocalTime }
 //The popup is a dialog box
 object addEventPopup {
 
+  // Current date
   val today = LocalDate.now()
 
   // Creates a dialog

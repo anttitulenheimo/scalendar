@@ -37,7 +37,7 @@ object dailyView extends ScrollPane {
       this.getRowConstraints.add(row)
 
       // add lines for hours
-    for (hour <- 0 until 24) {
+    for hour <- 0 until 24 do
       val hourLine = new Line {
         startX = 0
         endX = constants.windowWidth
@@ -54,7 +54,6 @@ object dailyView extends ScrollPane {
       }
 
       this.add(hourLine, 0, hour * 60, 2, 1)
-    }
 
     // hourGrids: labels for full hours
     for hour <- 0 until 24 do
