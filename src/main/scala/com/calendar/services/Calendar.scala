@@ -1,6 +1,6 @@
 package com.calendar.services
 
-import com.calendar.models.{ Category, Event }
+import com.calendar.models.{ Category, Event, Reminder }
 
 class Calendar(
   // A map of specific calendar events where the String is the calendars name
@@ -40,10 +40,17 @@ class Calendar(
 
   // Load events from a file
   // Returns the Seq for now
-  def loadFromFile(filename: String): Seq[Event] =
+  def loadFromFile(
+    filename: String,
+    fileReminderManager: Option[ReminderManager] = None
+  ): Seq[Event] =
     val icsReader = new ICalendarReader(filename)
     val loadEvents = icsReader.readEvents()
-    loadEvents.foreach(addEvent)
+    loadEvents.foreach(event =>
+      addEvent(event)
+      if event.reminder.isDefined then // Requires to be wrapped
+        fileReminderManager.foreach(_.setReminder(event))
+      )
     loadEvents
 
   // Save events to a file

@@ -26,6 +26,15 @@ https://www.tutorialspoint.com/javafx/index.htm
 https://www.youtube.com/@JavaCodeJunkie/playlists
 https://www.youtube.com/@BroCodez/playlists
 
+controlsFX notifications document:
+https://javadoc.io/doc/org.controlsfx/controlsfx/8.40.16/org/controlsfx/control/Notifications.html
+
+java timer document:
+https://docs.oracle.com/javase/8/docs/api/java/util/TimerTask.html
+
+java timer tutorial:
+https://www.youtube.com/watch?v=HjzcZkzRDYs
+
 CSS for buttons:
 https://getcssscan.com/css-buttons-examples
 

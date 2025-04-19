@@ -8,3 +8,5 @@ lazy val root = (project in file("."))
 libraryDependencies += "org.scalafx" % "scalafx_3" % "22.0.0-R33"
 
 libraryDependencies += "org.mnode.ical4j" % "ical4j" % "4.1.0"
+
+libraryDependencies += "org.controlsfx" % "controlsfx" % "11.1.2"

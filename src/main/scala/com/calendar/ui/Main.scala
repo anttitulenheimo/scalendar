@@ -1,7 +1,7 @@
 package com.calendar.ui
 
 import com.calendar.models.{ Category, Event }
-import com.calendar.services.Calendar
+import com.calendar.services.{ Calendar, ReminderManager }
 import com.calendar.ui.components.*
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
@@ -16,6 +16,7 @@ import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 import java.time.temporal.IsoFields
 import java.time.{ DayOfWeek, LocalDate }
 import scala.compiletime.uninitialized
+import java.util.{ Timer, TimerTask }
 
 object Main extends JFXApp3:
 
@@ -118,6 +119,23 @@ object Main extends JFXApp3:
   // Initialize empty seq
   private var allEvents: Seq[Event] = Seq()
 
+  // Initialize the reminderManager with an empty seq
+  private val reminderManager = new ReminderManager(Seq())
+
+  // Setup the timer
+  private def reminderTimer() =
+    val reminderTimer = new Timer(true) // True if the timer is repeating
+    val timerDelayBeforeRepeat = 60000 // ms
+    val remindTask = new TimerTask {
+      override def run(): Unit =
+        // Check and notify
+        reminderManager.notifyEvents()
+      // Clean the expired events
+      reminderManager.cleanReminders()
+    }
+    // Shchedules the task
+    reminderTimer.schedule(remindTask, 0, timerDelayBeforeRepeat)
+
   private val today = LocalDate.now
   private var startOfWeek = today.`with`(DayOfWeek.MONDAY)
   private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
@@ -156,7 +174,7 @@ object Main extends JFXApp3:
     // Creates a new weekViewScene and switches scenes
     switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
 
-  // Handles the refreshing a selected week
+  // Handles the refreshing of selected week
   private def refreshWeekView(): Unit =
     weekView.clearEvents()
     weekView.weekViewDatesRefresher(startOfWeek)
@@ -167,9 +185,13 @@ object Main extends JFXApp3:
       val result = addEventPopup.showDialog(stage, defaultCategories)
 
       result match
-        case Some(event: Event) => // If the event is type of Event
+        case Some(event: Event) => // If the object is type of Event
           // Adds the event to the calendar
           calendar.addEvent(event)
+          // Set a reminder
+          event.reminder match
+            case Some(realReminder) => reminderManager.setReminder(event)
+            case None =>
           // Updates
           allEvents = allEvents :+ event
           eventSeqMyCalendar = eventSeqMyCalendar :+ event
@@ -213,9 +235,11 @@ object Main extends JFXApp3:
 
     // Load user events
     eventSeqMyCalendar =
-      calendar.loadFromFile("src/main/resources/myCalendar.ics")
+      calendar.loadFromFile("src/main/resources/myCalendar.ics", Some(reminderManager))
 
     allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
+
+    reminderTimer()
 
     val fontSize = constants.windowWidth * 0.01
 
