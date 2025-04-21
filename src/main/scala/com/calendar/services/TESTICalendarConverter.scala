@@ -95,16 +95,17 @@ object TESTICalendarConverter {
       println(event.date)
       println(event.startingTime)
       println(event.endingTime)
-      println(event.category.name)
-      println(event.category.colorCode)
+      println("Category name" + event.category.name)
+      println("Category color" + event.category.colorCode)
       event.reminder match
         case Some(realReminder) =>        
-          println(realReminder.eventId)
-          println(realReminder.remindAt)
+          println("reminderName: " + realReminder.eventId)
+          println("reminder time: " + realReminder.remindAt)
         case _ =>
           print("No reminder found")
       println(event.additionalInfo.getOrElse("No additional info"))
       println(event.colorCode)
+      println()
     )
 }
 }

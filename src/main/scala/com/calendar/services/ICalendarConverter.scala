@@ -6,7 +6,7 @@ import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property._
 import net.fortuna.ical4j.model.property.XProperty
 import java.io.FileWriter
-import java.time.ZoneId
+import java.time.{ ZoneId, Duration }
 
 class ICalendarConverter(events: List[Event], filename: String) {
 
@@ -42,9 +42,35 @@ class ICalendarConverter(events: List[Event], filename: String) {
     vEvent.add(new Summary(event.name))
     vEvent.add(new Description(event.additionalInfo.getOrElse("")))
 
-    // TODO: Add a reminder 
-    val colorProp = new XProperty("X-COLOR", event.colorCode) // Extra properties are tagged with the "X"
+    val colorProp =
+      new XProperty(
+        "X-COLOR",
+        event.colorCode
+      ) // Extra properties are tagged with the "X"
     vEvent.add(colorProp)
+
+    // Categories are also extra properties
+    val categoryProp = new XProperty("X-CATEGORY", event.category.name)
+    vEvent.add(categoryProp)
+
+    // If there is a reminder
+    event.reminder match {
+      case Some(realReminder) => {
+        val minutesBefore = Duration
+          .between(realReminder.remindAt, event.startingTime)
+          .toMinutes
+
+        // Extra properties
+        val reminderNameProp =
+          new XProperty("X-REMINDERNAME", realReminder.eventId)
+        val reminderTimeProp =
+          new XProperty("X-REMINDERTIME", minutesBefore.toString)
+
+        vEvent.add(reminderNameProp)
+        vEvent.add(reminderTimeProp)
+      }
+      case None =>
+    }
 
     // Add the created event to the calendar
     calendar.add(vEvent)

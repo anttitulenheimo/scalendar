@@ -28,7 +28,7 @@ object eventView {
       Try(Color.web(event.colorCode)) match
         case Success(realColor) =>
           constants.toCssColor(realColor)
-        case Failure(exception) =>
+        case Failure(_) =>
           constants.eventDefaultColor
 
     // Creates an event box where event's parameters are shown

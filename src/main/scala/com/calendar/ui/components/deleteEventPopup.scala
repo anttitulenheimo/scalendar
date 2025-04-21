@@ -47,9 +47,9 @@ object deleteEventPopup {
 
       // cellFactory to enable cell edit/format
       // def cellFactory_=(v: (ListView[T]) ⇒ ListCell[T]): Unit
-      cellFactory = { (listView: ListView[Event]) =>
+      cellFactory = { (_ : ListView[Event]) =>
         new ListCell[Event] {
-          item.onChange { (observableValue, oldValue, newValue) =>
+          item.onChange { (_, _, newValue) =>
             if (newValue != null) then
               text =
                 s"${newValue.name} ${newValue.startingTime.format(dateTimeFormatter)}"
@@ -61,17 +61,14 @@ object deleteEventPopup {
 
     // User can select single item within eventListView
     eventListView.selectionModel().setSelectionMode(SelectionMode.SINGLE)
-    val selectedItems =
-      eventListView
-        .selectionModel()
-        .getSelectedItems // Returns the selected item
+    // Returns the selected item
 
     val deleteButton = dialog.dialogPane().lookupButton(deleteButtonType)
     deleteButton.disable = true // Delete button is disabled as default
 
     // Deletebutton is shown when events are selected
     eventListView.selectionModel().selectedItem.onChange {
-      (observableValue, oldValue, newValue) =>
+      (_, _, newValue) =>
         deleteButton.disable =
           newValue == null // Delete button is shown if some events are selected
     }

@@ -23,18 +23,4 @@ object EventValidator {
       // Single day events
       endTime.isAfter(startTime)
 
-  // Validate that the input is correct (=The input is non-empty) and parsing works
-  def validateInput(input: String, dateAndTime: String): Boolean =
-    input.nonEmpty && (
-      Try(
-        LocalDateTime
-          .parse(dateAndTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-      ) match {
-        case Success(dateAndTime) =>
-          true
-        case Failure(exception) =>
-          false
-      }
-    )
-
 }

@@ -5,11 +5,11 @@ import com.calendar.ui.constants
 import scalafx.geometry.Pos
 import scalafx.geometry.Pos.TopCenter
 import scalafx.scene.control.OverrunStyle.Clip
-import scalafx.scene.control.{ Button, Label, ScrollPane }
-import scalafx.scene.layout.{ GridPane, HBox, VBox }
-import scalafx.scene.text.{ Font, FontPosture, FontWeight }
+import scalafx.scene.control.{Button, Label, ScrollPane}
+import scalafx.scene.layout.{GridPane, HBox, VBox}
+import scalafx.scene.text.{Font, FontPosture, FontWeight}
 
-import java.time.*
+import java.time.{DayOfWeek, LocalDate}
 import scala.collection.mutable
 
 object weekView extends HBox {
@@ -29,8 +29,6 @@ object weekView extends HBox {
   val today = LocalDate.now
   val month = today.getMonth
   val year = today.getYear
-  val daysInThisMonth =
-    YearMonth.of(year, month).lengthOfMonth()
   // with sets the weekday name and date right
   var startOfWeek = today.`with`(DayOfWeek.MONDAY)
 
@@ -55,7 +53,7 @@ object weekView extends HBox {
   private val dayColumns = mutable.Map[String, VBox]()
 
   // Event handler for day button clicks
-  var onDaySelected: (LocalDate) => Unit = event => {}
+  var onDaySelected: (LocalDate) => Unit = _ => {}
 
   // Method to set the day selection handler
   def setOnDaySelected(handler: (LocalDate) => Unit): Unit = {
@@ -108,7 +106,7 @@ object weekView extends HBox {
                 "transform 270ms cubic-bezier(0, 0, .2, 1) 0ms; " +
                 "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
             ) // Different shadow
-          button.setOnAction(event =>
+          button.setOnAction(_ =>
             onDaySelected(newDate)
           ) // Update the onDaySelected
         )
@@ -211,12 +209,7 @@ object weekView extends HBox {
         )
 
       // Handle click event
-      onAction = event => onDaySelected(date)
-
-    val dateLabel = new Label(date.toString) {
-      font =
-        Font.font("Montserrat", FontWeight.Light, constants.windowWidth * 0.01)
-    }
+      onAction = _ => onDaySelected(date)
 
     //  Container for day and date
     val headerBox = new VBox:

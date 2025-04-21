@@ -1,8 +1,9 @@
 package com.calendar.ui
 
-import com.calendar.models.{ Category, Event }
+import com.calendar.models.Event
 import com.calendar.services.{ Calendar, ReminderManager }
 import com.calendar.ui.components.*
+import com.calendar.ui.constants.defaultCategories
 import scalafx.application.JFXApp3
 import scalafx.geometry.Insets
 import scalafx.scene.Scene
@@ -14,27 +15,17 @@ import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
 import java.time.temporal.IsoFields
-import java.time.{ DayOfWeek, LocalDate }
-import scala.compiletime.uninitialized
+import java.time.{ DayOfWeek, LocalDate, LocalDateTime }
 import java.util.{ Timer, TimerTask }
+import scala.compiletime.uninitialized
 
 object Main extends JFXApp3:
 
   // Set the dateHeader to be uninitialized
   private var dateHeader: Label = uninitialized
 
-  // Some default categories
-  private val defaultCategories = Seq[Category](
-    new Category("Work", "#1E90FF"), // Blue
-    new Category("Personal", "#32CD32"), // Green
-    new Category("Health", "#FF4500"), // Orange
-    new Category("Hobbies", "#9370DB"), // Purple
-    new Category("Urgent", "#DC143C"), // Red
-    new Category("School", "#FFD700") // Yellow
-  )
-
   private def createDeleteEventButton(): Button = new Button("Delete") {
-    onAction = event =>
+    onAction = _ =>
       var allEvents = calendar.getAllEvents
       if allEvents.nonEmpty then // No reason to delete if there is no events
         val result = deleteEventPopup.showDialog(stage, allEvents)
@@ -74,7 +65,7 @@ object Main extends JFXApp3:
   }
 
   private def createSaveButton(): Button = new Button("Save") {
-    onAction = event =>
+    onAction = _ =>
       val allUserEvents =
         calendar.getAllEvents.filterNot(eventSeqPublicHolidays.contains)
       // Filter the userEvents
@@ -122,7 +113,7 @@ object Main extends JFXApp3:
   // Initialize the reminderManager with an empty seq
   private val reminderManager = new ReminderManager(Seq())
 
-  // Setup the timer
+  // Set up the timer
   private def reminderTimer() =
     val reminderTimer = new Timer(true) // True if the timer is repeating
     val timerDelayBeforeRepeat = 60000 // ms
@@ -141,8 +132,8 @@ object Main extends JFXApp3:
   private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
   // Button to navigate to this day
-  private def createTodayButton: Button = new Button("Today") {
-    onAction = event =>
+  private def createTodayButton: Button = new Button("Current week") {
+    onAction = _ =>
       startOfWeek = LocalDate.now.`with`(DayOfWeek.MONDAY)
       weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
       refreshWeekView()
@@ -180,9 +171,18 @@ object Main extends JFXApp3:
     weekView.weekViewDatesRefresher(startOfWeek)
     weekView.addEvents(allEvents)
 
+  // For the createAddEventButton's args
+  val defaultStartTime = LocalDateTime.now().withSecond(0).withNano(0)
+  val defaultEndTime = defaultStartTime.plusHours(1)
+
   private def createAddEventButton(): Button = new Button("Add Event") {
-    onAction = event =>
-      val result = addEventPopup.showDialog(stage, defaultCategories)
+    onAction = _ =>
+      val result = addEventPopup.showDialog(
+        stage,
+        defaultCategories,
+        defaultStartTime,
+        defaultEndTime
+      )
 
       result match
         case Some(event: Event) => // If the object is type of Event
@@ -190,8 +190,8 @@ object Main extends JFXApp3:
           calendar.addEvent(event)
           // Set a reminder
           event.reminder match
-            case Some(realReminder) => reminderManager.setReminder(event)
-            case None =>
+            case Some(_) => reminderManager.setReminder(event)
+            case None    =>
           // Updates
           allEvents = allEvents :+ event
           eventSeqMyCalendar = eventSeqMyCalendar :+ event
@@ -227,6 +227,29 @@ object Main extends JFXApp3:
     )
   }
 
+  def addEventByMouse(event: Event) = {
+    // Adds the event to the calendar
+    calendar.addEvent(event)
+
+    // Set a reminder
+    event.reminder match
+      case Some(_) => reminderManager.setReminder(event)
+      case None    =>
+
+    // Updates
+    allEvents = allEvents :+ event
+    eventSeqMyCalendar = eventSeqMyCalendar :+ event
+
+    refreshWeekView()
+
+    // Update dailyView
+    val eventsForDay =
+      allEvents.filter(_.startingTime.toLocalDate == event.date)
+    dailyView.clearEvents()
+    dailyView.addEvents(eventsForDay, event.date)
+
+  }
+
   def start() = {
 
     // Load public holidays
@@ -234,8 +257,10 @@ object Main extends JFXApp3:
       calendar.loadFromFile("src/main/resources/finland.ics")
 
     // Load user events
-    eventSeqMyCalendar =
-      calendar.loadFromFile("src/main/resources/myCalendar.ics", Some(reminderManager))
+    eventSeqMyCalendar = calendar.loadFromFile(
+      "src/main/resources/myCalendar.ics",
+      Some(reminderManager)
+    )
 
     allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
 
@@ -306,7 +331,7 @@ object Main extends JFXApp3:
     }
     // Button to navigate to previous week
     val preWeekButton = new Button("◀") {
-      onAction = event => navigateBetweenWeeks(-1)
+      onAction = _ => navigateBetweenWeeks(-1)
       this.setStyle(
         "-fx-background-color: #fff; " +
           "-fx-border-radius: 24px; " +
@@ -326,7 +351,7 @@ object Main extends JFXApp3:
     }
     // Button to navigate to next week
     val nextWeekButton = new Button("▶") {
-      onAction = event => navigateBetweenWeeks(+1)
+      onAction = _ => navigateBetweenWeeks(+1)
       this.setStyle(
         "-fx-background-color: #fff; " +
           "-fx-border-radius: 24px; " +
@@ -381,8 +406,8 @@ object Main extends JFXApp3:
     }
 
     // Back button for navigation
-    val backButton = new Button("Back to Week View") {
-      onAction = event => switchScenes(createWeekViewScene(fontSize))
+    val backButton = new Button("Back to Week view") {
+      onAction = _ => switchScenes(createWeekViewScene(fontSize))
       this.setStyle(
         "-fx-background-color: #fff; " +
           "-fx-border-radius: 24px; " +

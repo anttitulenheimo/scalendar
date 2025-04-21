@@ -34,7 +34,6 @@ import scala.util.{ Failure, Success, Try }
 import java.time.format.DateTimeFormatter
 import java.time.{ LocalDate, LocalDateTime, LocalTime }
 
-
 //The popup is a dialog box
 object addEventPopup {
 
@@ -43,7 +42,12 @@ object addEventPopup {
 
   // Creates a dialog
   // Returns null instead of None because scalafx is java based
-  def showDialog(parentWindow: Window, categories: Seq[Category]): Any = {
+  def showDialog(
+    parentWindow: Window,
+    categories: Seq[Category],
+    startDateTime: LocalDateTime,
+    endDateTime: LocalDateTime
+  ): Option[Event] = {
     val dialog = new Dialog[Event]() {
       initOwner(parentWindow)
       title = "Add a new event"
@@ -91,6 +95,22 @@ object addEventPopup {
         timeFormatter
       ) // The current hour plus 1 is set as default
     }
+
+    // Default values for the next if
+    val defaultStartTime = LocalDateTime.now().withSecond(0).withNano(0)
+    val defaultEndTime = defaultStartTime.plusHours(1)
+    // Formatting and setting the arguments if the values are from the dragToAddEvent
+    if (
+      (startDateTime.toLocalDate != LocalDate.now() ||
+      startDateTime.toLocalTime != defaultStartTime.toLocalTime ||
+      endDateTime.toLocalDate != LocalDate.now() ||
+      endDateTime.toLocalTime != defaultEndTime.toLocalTime)
+    ) then
+      startDatePicker.value = startDateTime.toLocalDate
+      endingDatePicker.value = endDateTime.toLocalDate
+      startingTimeTextField.text = startDateTime.format(timeFormatter)
+      endingTimeTextField.text = endDateTime.format(timeFormatter)
+
     grid.add(new Label("End Time:"), 0, 3) // (0,3)
     grid.add(endingTimeTextField, 1, 3) // (1,2)
 
@@ -143,9 +163,8 @@ object addEventPopup {
     grid.add(reminderTextField, 1, 8) // (1,8)
 
     // Enable / Disable reminderTextField
-    addReminderCheckBox.selected.onChange {
-      (observableValue, oldValue, newValue) =>
-        reminderTextField.disable = !newValue
+    addReminderCheckBox.selected.onChange { (_, _, newValue) =>
+      reminderTextField.disable = !newValue
     }
 
     dialog.dialogPane().content = grid
@@ -155,7 +174,7 @@ object addEventPopup {
     addButton.disable = eventName.text().isEmpty
 
     // Do some validation (disable when eventName is empty).
-    eventName.text.onChange { (observableValue, oldValue, newValue) =>
+    eventName.text.onChange { (_, _, newValue) =>
       addButton.disable = newValue.trim().isEmpty
     }
 
@@ -179,7 +198,6 @@ object addEventPopup {
             startTimeLocal
           ) // Converts LocalTime to LocalDateTime
           val endDateTime = LocalDateTime.of(endDate, endTimeLocal)
-
 
           // Use eventValidator to validate user inputs
           if (!EventValidator.validateTime(startDateTime, endDateTime)) then
@@ -210,7 +228,7 @@ object addEventPopup {
                 case Success(minutes) =>
                   Some(new Reminder(name, startDateTime.minusMinutes(minutes)))
                 case Failure(
-                      parsingFailed
+                      _
                     ) => // If parsing fails then the reminder is set 30 minutes before the event starts
                   Some(new Reminder(name, startDateTime.minusMinutes(30)))
             else None
@@ -234,7 +252,12 @@ object addEventPopup {
     }
 
     val result = dialog.showAndWait()
-    result
+    result match
+      case Some(event) =>
+        Some(
+          event.asInstanceOf[com.calendar.models.Event]
+        ) // The right event type specified
+      case _ => None
 
   }
   // Dialogs an Error

@@ -14,6 +14,7 @@ Materials used for this project:
 scalafx documentation:
 https://scalafx.org/
 https://scalafx.org/api/8.0/index.html#scalafx.package
+https://scalafx.org/docs/faq_TableView_with_Custom_cell/
 
 ical4j documentation:
 https://javadoc.io/doc/org.mnode.ical4j/ical4j/latest/ical4j.core/module-summary.html

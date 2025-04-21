@@ -1,13 +1,14 @@
 package com.calendar.services
 
 import net.fortuna.ical4j.data.CalendarBuilder
-import com.calendar.models.{ Category, Event, Reminder }
-import net.fortuna.ical4j.model.{ DateTime, Calendar as ICal4jCalendar }
+import com.calendar.models.{Category, Event, Reminder}
+import com.calendar.ui.constants
+import net.fortuna.ical4j.model.{DateTime, Calendar as ICal4jCalendar}
 import net.fortuna.ical4j.model.component.VEvent
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-import java.io.{ FileInputStream, FileNotFoundException }
-import java.time.*
+import java.io.{FileInputStream, FileNotFoundException}
+import java.time.{LocalDateTime, ZoneId}
 
 class ICalendarReader(filename: String) {
 
@@ -45,10 +46,23 @@ class ICalendarReader(filename: String) {
         // AdditionalInfo is  the eventDescription
         val vEventDescription = Option(vEvent.getDescription).map(_.getValue)
 
-        // Use the default category
-        val vEventCategory = new Category("", "#A0B8D9")
-
-        val vEventReminder = Some(new Reminder(vEventname, vEventStartingTime))
+        val vEventReminder =
+          Option(vEvent.getProperty("X-REMINDERNAME")).flatMap { reminderProp =>
+            if (reminderProp.isPresent) then
+              // There is a reminder so the remindertime is read too
+              Option(vEvent.getProperty("X-REMINDERTIME")).flatMap {
+                minutesProp =>
+                  if (minutesProp.isPresent) then
+                    try {
+                      val minutesParsed: Int = minutesProp.get.getValue.toInt
+                      Some(new Reminder(vEventname, vEventStartingTime))
+                    } catch {
+                      case _: Exception => None
+                    }
+                  else None
+              }
+            else None
+          }
 
         // getProperty returns the Java Optional so we need to extract it using isPresent
         val colorCodeOpt = Option(vEvent.getProperty("X-COLOR")).flatMap {
@@ -57,6 +71,18 @@ class ICalendarReader(filename: String) {
             else None
         }
         val vEventColorCode = colorCodeOpt.getOrElse("#A0B8D9")
+
+        val vEventCategoryName = Option(vEvent.getProperty("X-CATEGORY"))
+          .flatMap { javaOpt =>
+            if (javaOpt.isPresent) then Some(javaOpt.get.getValue)
+            else None
+          }
+          .getOrElse("")
+
+        // If the category is not found then the default is used
+        val vEventCategory = constants.defaultCategories
+          .find(_.name == vEventCategoryName)
+          .getOrElse(new Category(vEventCategoryName, vEventColorCode))
 
         // Creates a new Event
         new Event(
@@ -71,7 +97,7 @@ class ICalendarReader(filename: String) {
         )
       }.toSeq
     } catch {
-      case e: FileNotFoundException =>
+      case _: FileNotFoundException =>
         println(s"File not found: $filename")
         Seq.empty[Event]
       case e: Exception =>

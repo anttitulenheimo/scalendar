@@ -25,7 +25,7 @@ class Calendar(
   def deleteEvent(eventName: String): Boolean =
     val possibleEvent = eventMap.get(eventName)
     possibleEvent match
-      case Some(existingEvent) =>
+      case Some(_) =>
         eventMap -= eventName
         true
       case None =>
