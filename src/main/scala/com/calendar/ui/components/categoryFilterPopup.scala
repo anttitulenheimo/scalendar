@@ -35,10 +35,8 @@ object categoryFilterPopup {
 
     // Set the button types
     val filterButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OKDone)
-    val clearButtonType =
-      new ButtonType("Clear filter", ButtonBar.ButtonData.Left)
     dialog.dialogPane().buttonTypes =
-      Seq(filterButtonType, clearButtonType, ButtonType.Cancel)
+      Seq(filterButtonType, ButtonType.Cancel)
 
     // ListView to display categories
     val categoryListView = new ListView[Category]() {
@@ -60,10 +58,10 @@ object categoryFilterPopup {
     val filterButton = dialog.dialogPane().lookupButton(filterButtonType)
     filterButton.disable = true // Filter button is disabled as default
 
-    // Filter button is shown when categories are selected
+    // Buttons are shown when categories are selected
     categoryListView.selectionModel().selectedItems.onChange { (_, newValue) =>
       filterButton.disable =
-        newValue.isEmpty // Filter button is shown if some categories are selected
+        newValue.isEmpty
     }
 
     // ViewBox has the categoryListView as a child
@@ -77,7 +75,6 @@ object categoryFilterPopup {
     dialog.resultConverter = dialogButton => {
       if (dialogButton == filterButtonType) then
         categoryListView.selectionModel().getSelectedItems.asScala.toSeq
-      else if (dialogButton == clearButtonType) then Seq[Category]()
       else null
     }
 
