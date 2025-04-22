@@ -1,14 +1,14 @@
 package com.calendar.services
 
 import net.fortuna.ical4j.data.CalendarBuilder
-import com.calendar.models.{Category, Event, Reminder}
+import com.calendar.models.{ Category, Event, Reminder }
 import com.calendar.ui.constants
-import net.fortuna.ical4j.model.{DateTime, Calendar as ICal4jCalendar}
+import net.fortuna.ical4j.model.{ DateTime, Calendar as ICal4jCalendar }
 import net.fortuna.ical4j.model.component.VEvent
 
 import scala.collection.JavaConverters.asScalaBufferConverter
-import java.io.{FileInputStream, FileNotFoundException}
-import java.time.{LocalDateTime, ZoneId}
+import java.io.{ FileInputStream, FileNotFoundException }
+import java.time.{ LocalDateTime, ZoneId }
 
 class ICalendarReader(filename: String) {
 

@@ -52,7 +52,7 @@ class Calendar(
       addEvent(event)
       if event.reminder.isDefined then // Requires to be wrapped
         fileReminderManager.foreach(_.setReminder(event))
-      )
+    )
     loadEvents
 
   // Save events to a file

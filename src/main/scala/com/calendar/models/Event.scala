@@ -1,12 +1,6 @@
 package com.calendar.models
 
-import java.time.{ LocalDateTime, LocalDate }
-import scala.io.StdIn
-import scala.util.{ Try, Success, Failure }
-import java.time.format.DateTimeFormatter
-import com.calendar.services.EventValidator
-
-//ToDO implement a better addReminder method
+import java.time.{ LocalDate, LocalDateTime }
 
 class Event(
   val name: String,
@@ -17,8 +11,4 @@ class Event(
   val reminder: Option[Reminder],
   val additionalInfo: Option[String],
   var colorCode: String = "#808080" // a default color
-) {
-
-  // Add a reminder for the event
-
-}
+) {}

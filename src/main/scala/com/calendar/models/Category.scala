@@ -1,5 +1,3 @@
 package com.calendar.models
 
-class Category(val name: String, var colorCode: String) {
-
-}
+class Category(val name: String, var colorCode: String) {}

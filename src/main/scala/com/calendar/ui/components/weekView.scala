@@ -5,11 +5,11 @@ import com.calendar.ui.constants
 import scalafx.geometry.Pos
 import scalafx.geometry.Pos.TopCenter
 import scalafx.scene.control.OverrunStyle.Clip
-import scalafx.scene.control.{Button, Label, ScrollPane}
-import scalafx.scene.layout.{GridPane, HBox, VBox}
-import scalafx.scene.text.{Font, FontPosture, FontWeight}
+import scalafx.scene.control.{ Button, Label, ScrollPane }
+import scalafx.scene.layout.{ GridPane, HBox, VBox }
+import scalafx.scene.text.{ Font, FontPosture, FontWeight }
 
-import java.time.{DayOfWeek, LocalDate}
+import java.time.{ DayOfWeek, LocalDate }
 import scala.collection.mutable
 
 object weekView extends HBox {

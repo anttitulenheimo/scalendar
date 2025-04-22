@@ -3,8 +3,8 @@ package com.calendar.ui
 import com.calendar.models.Category
 import scalafx.scene.paint.Color
 import scalafx.stage.Screen
-//Constants object for the UI components to use
 
+//Constants object for the UI components to use
 object constants {
 
   lazy val screenBounds =

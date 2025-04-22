@@ -244,8 +244,8 @@ object addEventPopup {
       case _ => None
 
   }
-    // Dialogs an Error
-    private def ErrorDialog(msg: String): Unit = {
+  // Dialogs an Error
+  private def ErrorDialog(msg: String): Unit = {
     new Alert(AlertType.Error) {
       title = "Error"
       headerText = "Error creating event"

@@ -39,7 +39,7 @@ object deleteEventPopup {
       items = ObservableBuffer.from(events)
 
       // cellFactory to enable cell edit/format
-      cellFactory = { (_ : ListView[Event]) =>
+      cellFactory = { (_: ListView[Event]) =>
         new ListCell[Event] {
           item.onChange { (_, _, newValue) =>
             if (newValue != null) then
@@ -58,10 +58,9 @@ object deleteEventPopup {
     deleteButton.disable = true // Delete button is disabled as default
 
     // Deletebutton is shown when events are selected
-    eventListView.selectionModel().selectedItem.onChange {
-      (_, _, newValue) =>
-        deleteButton.disable =
-          newValue == null // Delete button is shown if some events are selected
+    eventListView.selectionModel().selectedItem.onChange { (_, _, newValue) =>
+      deleteButton.disable =
+        newValue == null // Delete button is shown if some events are selected
     }
     // ViewBox has the listView as a child
     val viewBox = new VBox(10) {

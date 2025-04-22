@@ -13,6 +13,7 @@ import scalafx.scene.control.{ Alert, Button, Label }
 import scalafx.scene.layout.{ BorderPane, HBox, VBox }
 import scalafx.scene.paint.Color.*
 import scalafx.scene.text.{ Font, FontPosture, FontWeight }
+import scalafx.stage.FileChooser
 
 import java.time.temporal.IsoFields
 import java.time.{ DayOfWeek, LocalDate, LocalDateTime }
@@ -169,18 +170,19 @@ object Main extends JFXApp3:
     // Creates a new weekViewScene and switches scenes depening is the filtering on
     switchScenes(
       if (filteredEventsOn) then
-        createWeekViewScene(constants.windowWidth * 0.01, Some(createResetFilterButton()))
-      else
-        createWeekViewScene(constants.windowWidth * 0.01, None))
+        createWeekViewScene(
+          constants.windowWidth * 0.01,
+          Some(createResetFilterButton())
+        )
+      else createWeekViewScene(constants.windowWidth * 0.01, None)
+    )
 
   // Handles the refreshing of selected week
   private def refreshWeekView(): Unit =
     weekView.clearEvents()
     weekView.weekViewDatesRefresher(startOfWeek)
-    if (filteredEventsOn) then
-      weekView.addEvents(currentFilteredEvents)
-    else
-      weekView.addEvents(allEvents)
+    if (filteredEventsOn) then weekView.addEvents(currentFilteredEvents)
+    else weekView.addEvents(allEvents)
 
   // For the createAddEventButton's args
   val defaultStartTime = LocalDateTime.now().withSecond(0).withNano(0)
@@ -371,6 +373,57 @@ object Main extends JFXApp3:
     )
   }
 
+  private def createChooseFromFileButton(): Button = new Button(
+    "Load from file"
+  ) {
+    onAction = _ => {
+      val fileChooser = new FileChooser() {
+        title = "Open a calendar file"
+      }
+      fileChooser.getExtensionFilters.add(
+        new FileChooser.ExtensionFilter("Calendar files", "*.ics")
+      )
+      val selectedFile = fileChooser.showOpenDialog(stage)
+
+      // Events are loaded from file if the file is selected
+      if (selectedFile != null) then
+        try {
+          val loadedEvents =
+            calendar.loadFromFile(selectedFile.getAbsolutePath, None)
+          allEvents = allEvents ++ loadedEvents // Update the event seq
+          eventSeqMyCalendar = eventSeqMyCalendar ++ loadedEvents
+          refreshWeekView()
+          // Alerts that events were loaded
+          new Alert(AlertType.Information) {
+            title = "Events loaded"
+            headerText = "Events loaded successfully"
+            contentText = s"${loadedEvents.size} events saved"
+          }.showAndWait()
+        } catch {
+          case e: Exception =>
+            new Alert(AlertType.Error) {
+              title = "Error loading file"
+              headerText = "Error when loading file"
+              contentText = e.getMessage
+            }.showAndWait()
+        }
+
+    }
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
   def start() = {
 
     // Load public holidays
@@ -510,7 +563,8 @@ object Main extends JFXApp3:
           createDeleteEventButton(),
           createTodayButton,
           createCategoryFilterButton(),
-          createSearchEventButton()
+          createSearchEventButton(),
+          createChooseFromFileButton()
         ) ++ resetFilterButton // resetFilterButton is added if it is given
       }
       center = weekView

@@ -35,8 +35,7 @@ object categoryFilterPopup {
 
     // Set the button types
     val filterButtonType = new ButtonType("Filter", ButtonBar.ButtonData.OKDone)
-    dialog.dialogPane().buttonTypes =
-      Seq(filterButtonType, ButtonType.Cancel)
+    dialog.dialogPane().buttonTypes = Seq(filterButtonType, ButtonType.Cancel)
 
     // ListView to display categories
     val categoryListView = new ListView[Category]() {
@@ -60,8 +59,7 @@ object categoryFilterPopup {
 
     // Buttons are shown when categories are selected
     categoryListView.selectionModel().selectedItems.onChange { (_, newValue) =>
-      filterButton.disable =
-        newValue.isEmpty
+      filterButton.disable = newValue.isEmpty
     }
 
     // ViewBox has the categoryListView as a child

@@ -1,10 +1,8 @@
 package com.calendar.services
 
-import com.calendar.models.{ Event, Reminder }
+import com.calendar.models.Event
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import scala.util.{ Failure, Success, Try }
 
 object EventValidator {
 
