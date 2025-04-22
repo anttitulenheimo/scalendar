@@ -1,11 +1,9 @@
 package com.calendar.services
 
-import com.calendar.models.Reminder
-import com.calendar.models.Event
-import com.calendar.ui.constants
+import com.calendar.models.{ Event, Reminder }
 import javafx.util.Duration
-import scalafx.application.Platform
 import org.controlsfx.control.Notifications
+import scalafx.application.Platform
 
 import java.time.LocalDateTime
 
