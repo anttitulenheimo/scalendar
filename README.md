@@ -3,8 +3,8 @@
 
 # Calendar application
 
-[![GitHub issues](https://github.com/anttitulenheimo/scalendar/issues)](https://github.com/anttitulenheimo/scalendar/issues)
-[![GitHub pull requests](https://github.com/anttitulenheimo/scalendar/pulls)](https://github.com/anttitulenheimo/scalendar/pulls)
+[![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)](https://github.com/anttitulenheimo/scalendar/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)](https://github.com/anttitulenheimo/scalendar/pulls)
 
 ## About
 
@@ -61,7 +61,7 @@ git clone https://github.com/anttitulenheimo/scalendar.git
 ```bash
 cd scalendar
 ```
-3. Run the application
+3. Run the application<br>
 To run the application, execute the following command:
 
 ```bash
