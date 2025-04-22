@@ -3,7 +3,6 @@
 
 # Calendar application
 
-[![GitHub last commit](https://github.com/anttitulenheimo/scalendar/commits/master/)](https://github.com/anttitulenheimo/scalendar/commits/master/)
 [![GitHub issues](https://github.com/anttitulenheimo/scalendar/issues)](https://github.com/anttitulenheimo/scalendar/issues)
 [![GitHub pull requests](https://github.com/anttitulenheimo/scalendar/pulls)](https://github.com/anttitulenheimo/scalendar/pulls)
 
@@ -32,6 +31,13 @@ You can store:
 - Add extra information to events: location, course, link, participants, etc.
 - Filter calendar view to show only selected categories (e.g., study or work)
 - Search for all events related to a course, hobby, or person and display them in a list
+
+
+![GitHub issues](https://github.com/anttitulenheimo/scalendar/issues)
+: Dynamic badge that shows the number of open issues in the project.
+
+![GitHub pull requests](https://github.com/anttitulenheimo/scalendar/pulls)
+: Similar dynamic badge, but for pull requests.
 
 
 # Installation
