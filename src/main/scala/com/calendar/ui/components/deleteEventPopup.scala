@@ -46,7 +46,6 @@ object deleteEventPopup {
       items = ObservableBuffer.from(events)
 
       // cellFactory to enable cell edit/format
-      // def cellFactory_=(v: (ListView[T]) ⇒ ListCell[T]): Unit
       cellFactory = { (_ : ListView[Event]) =>
         new ListCell[Event] {
           item.onChange { (_, _, newValue) =>
@@ -61,7 +60,6 @@ object deleteEventPopup {
 
     // User can select single item within eventListView
     eventListView.selectionModel().setSelectionMode(SelectionMode.SINGLE)
-    // Returns the selected item
 
     val deleteButton = dialog.dialogPane().lookupButton(deleteButtonType)
     deleteButton.disable = true // Delete button is disabled as default

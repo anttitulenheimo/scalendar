@@ -137,7 +137,7 @@ object Main extends JFXApp3:
       startOfWeek = LocalDate.now.`with`(DayOfWeek.MONDAY)
       weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
       refreshWeekView()
-      switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
+      switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
 
     this.setStyle(
       "-fx-background-color: #fff; " +
@@ -163,7 +163,7 @@ object Main extends JFXApp3:
     // Refresh the weekView
     refreshWeekView()
     // Creates a new weekViewScene and switches scenes
-    switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
+    switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
 
   // Handles the refreshing of selected week
   private def refreshWeekView(): Unit =
@@ -209,7 +209,9 @@ object Main extends JFXApp3:
             dailyView.clearEvents()
             dailyView.addEvents(eventsForDay, event.date)
             // Refresh
-            switchScenes(createWeekViewScene(constants.windowWidth * 0.01))
+            switchScenes(
+              createWeekViewScene(constants.windowWidth * 0.01, None)
+            )
 
         case _ => // The add event was canceled
     this.setStyle(
@@ -250,6 +252,65 @@ object Main extends JFXApp3:
 
   }
 
+  private def createCategoryFilterButton(): Button = new Button(
+    "Filter by category"
+  ) {
+    onAction = _ => {
+      val result = categoryFilterPopup.showDialog(stage, defaultCategories)
+      result match {
+        case Some(realCategories) =>
+          val filteredEvents = calendar.filterEventsByCategory(realCategories)
+          // Update the weekView and dailyView
+          weekView.clearEvents()
+          weekView.addEvents(filteredEvents)
+          // Reset filter button is shown when filtered events are shown
+          val resetFilterButton = createResetFilterButton()
+          // Show the filtered weekView with a reset button
+          switchScenes(
+            createWeekViewScene(
+              constants.windowWidth * 0.01,
+              Some(resetFilterButton)
+            )
+          )
+        case None =>
+      }
+    }
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
+  private def createResetFilterButton(): Button = new Button("Reset filter") {
+    onAction = _ => {
+      // Refresh and load weekView again
+      refreshWeekView()
+      switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
+    }
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
   def start() = {
 
     // Load public holidays
@@ -268,7 +329,7 @@ object Main extends JFXApp3:
 
     val fontSize = constants.windowWidth * 0.01
 
-    val weekViewScene: Scene = createWeekViewScene(fontSize)
+    val weekViewScene: Scene = createWeekViewScene(fontSize, None)
     val dailyViewScene: Scene = createDailyViewScene(fontSize)
 
     // Set up day selection handler in weekView
@@ -314,7 +375,10 @@ object Main extends JFXApp3:
     stage.setScene(scene)
 
   // Creates the weekViewScene
-  private def createWeekViewScene(fontSize: Double): Scene = {
+  private def createWeekViewScene(
+    fontSize: Double,
+    resetFilterButton: Option[Button]
+  ): Scene = {
     val welcomeLabel = new Label("Welcome to your calendar") {
       textFill = Black
       font = Font.font(
@@ -384,8 +448,9 @@ object Main extends JFXApp3:
           createAddEventButton(),
           createSaveButton(),
           createDeleteEventButton(),
-          createTodayButton
-        )
+          createTodayButton,
+          createCategoryFilterButton()
+        ) ++ resetFilterButton // resetFilterButton is added if it is given
       }
       center = weekView
       right = navigationContainer
@@ -407,7 +472,7 @@ object Main extends JFXApp3:
 
     // Back button for navigation
     val backButton = new Button("Back to Week view") {
-      onAction = _ => switchScenes(createWeekViewScene(fontSize))
+      onAction = _ => switchScenes(createWeekViewScene(fontSize, None))
       this.setStyle(
         "-fx-background-color: #fff; " +
           "-fx-border-radius: 24px; " +
@@ -435,7 +500,8 @@ object Main extends JFXApp3:
             backButton,
             createAddEventButton(),
             createSaveButton(),
-            createDeleteEventButton()
+            createDeleteEventButton(),
+            createCategoryFilterButton()
           )
         },
         dateHeader

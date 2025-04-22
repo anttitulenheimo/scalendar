@@ -1,6 +1,6 @@
 package com.calendar.services
 
-import com.calendar.models.{ Category, Event, Reminder }
+import com.calendar.models.{ Category, Event }
 
 class Calendar(
   // A map of specific calendar events where the String is the calendars name
@@ -31,12 +31,14 @@ class Calendar(
       case None =>
         false
 
-  // Filter events by category
-  def filterEventsByCategory(category: Category): List[Event] =
+  // Filter events by categories
+  def filterEventsByCategory(categorySeq: Seq[Category]): Seq[Event] = {
+    val categoryNames = categorySeq.map(_.name).toSet // Set removes duplicates
     eventMap
-      .filter((EventName, Event) => Event.category.name == category.name)
-      .map((EventName, Event) => Event)
-      .toList
+      .filter((_, event) => categoryNames.contains(event.category.name))
+      .map((_, event) => event)
+      .toSeq
+  }
 
   // Load events from a file
   // Returns the Seq for now

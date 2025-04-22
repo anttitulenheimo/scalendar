@@ -169,7 +169,7 @@ object addEventPopup {
 
     dialog.dialogPane().content = grid
 
-    // Enable/Disable login button depending on whether an eventName was
+    // Enable/Disable login button depending on whether an eventName was empty
     val addButton = dialog.dialogPane().lookupButton(addButtonType)
     addButton.disable = eventName.text().isEmpty
 
@@ -261,7 +261,7 @@ object addEventPopup {
 
   }
   // Dialogs an Error
-  private def ErrorDialog(msg: String): Unit = {
+    private def ErrorDialog(msg: String): Unit = {
     new Alert(AlertType.Error) {
       title = "Error"
       headerText = "Error creating event"
