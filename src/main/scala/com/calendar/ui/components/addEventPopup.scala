@@ -3,36 +3,20 @@ package com.calendar.ui.components
 import com.calendar.models.{ Category, Event, Reminder }
 import com.calendar.services.EventValidator
 import com.calendar.ui.constants
-import scalafx.beans.Observable
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Insets
-import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.ButtonBar.ButtonData.OKDone
-import scalafx.scene.control.{
-  Alert,
-  Button,
-  ButtonBar,
-  ButtonType,
-  CheckBox,
-  ColorPicker,
-  ComboBox,
-  DatePicker,
-  Dialog,
-  Label,
-  TextArea,
-  TextField
-}
-import scalafx.stage.Window
-import scalafx.scene.control.ControlIncludes.jfxDialogPane2sfx
 import scalafx.scene.SceneIncludes.jfxNode2sfx
-import scalafx.scene.paint.PaintIncludes.jfxColor2sfx
 import scalafx.scene.control.Alert.AlertType
+import scalafx.scene.control.ControlIncludes.jfxDialogPane2sfx
+import scalafx.scene.control.*
 import scalafx.scene.layout.GridPane
 import scalafx.scene.paint.Color
+import scalafx.scene.paint.PaintIncludes.jfxColor2sfx
+import scalafx.stage.Window
 
-import scala.util.{ Failure, Success, Try }
 import java.time.format.DateTimeFormatter
 import java.time.{ LocalDate, LocalDateTime, LocalTime }
+import scala.util.{ Failure, Success, Try }
 
 //The popup is a dialog box
 object addEventPopup {
@@ -169,11 +153,11 @@ object addEventPopup {
 
     dialog.dialogPane().content = grid
 
-    // Enable/Disable login button depending on whether an eventName was empty
+    // Disable add button if an eventName is empty
     val addButton = dialog.dialogPane().lookupButton(addButtonType)
     addButton.disable = eventName.text().isEmpty
 
-    // Do some validation (disable when eventName is empty).
+    // Do some validation
     eventName.text.onChange { (_, _, newValue) =>
       addButton.disable = newValue.trim().isEmpty
     }
@@ -260,7 +244,7 @@ object addEventPopup {
       case _ => None
 
   }
-  // Dialogs an Error
+    // Dialogs an Error
     private def ErrorDialog(msg: String): Unit = {
     new Alert(AlertType.Error) {
       title = "Error"

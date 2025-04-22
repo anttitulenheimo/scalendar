@@ -24,6 +24,10 @@ object Main extends JFXApp3:
   // Set the dateHeader to be uninitialized
   private var dateHeader: Label = uninitialized
 
+  // For the category filtering and search filtering
+  private var filteredEventsOn = false
+  private var currentFilteredEvents: Seq[Event] = Seq()
+
   private def createDeleteEventButton(): Button = new Button("Delete") {
     onAction = _ =>
       var allEvents = calendar.getAllEvents
@@ -162,14 +166,21 @@ object Main extends JFXApp3:
     weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
     // Refresh the weekView
     refreshWeekView()
-    // Creates a new weekViewScene and switches scenes
-    switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
+    // Creates a new weekViewScene and switches scenes depening is the filtering on
+    switchScenes(
+      if (filteredEventsOn) then
+        createWeekViewScene(constants.windowWidth * 0.01, Some(createResetFilterButton()))
+      else
+        createWeekViewScene(constants.windowWidth * 0.01, None))
 
   // Handles the refreshing of selected week
   private def refreshWeekView(): Unit =
     weekView.clearEvents()
     weekView.weekViewDatesRefresher(startOfWeek)
-    weekView.addEvents(allEvents)
+    if (filteredEventsOn) then
+      weekView.addEvents(currentFilteredEvents)
+    else
+      weekView.addEvents(allEvents)
 
   // For the createAddEventButton's args
   val defaultStartTime = LocalDateTime.now().withSecond(0).withNano(0)
@@ -260,6 +271,8 @@ object Main extends JFXApp3:
       result match {
         case Some(realCategories) =>
           val filteredEvents = calendar.filterEventsByCategory(realCategories)
+          currentFilteredEvents = filteredEvents
+          filteredEventsOn = true
           // Update the weekView and dailyView
           weekView.clearEvents()
           weekView.addEvents(filteredEvents)
@@ -292,9 +305,56 @@ object Main extends JFXApp3:
 
   private def createResetFilterButton(): Button = new Button("Reset filter") {
     onAction = _ => {
+      filteredEventsOn = false
+      currentFilteredEvents = Seq[Event]() // Filtered events is emptied
       // Refresh and load weekView again
       refreshWeekView()
       switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
+    }
+    this.setStyle(
+      "-fx-background-color: #fff; " +
+        "-fx-border-radius: 24px; " +
+        "-fx-border-style: none; " +
+        "-fx-text-fill: #3c4043; " +
+        "-fx-font-family: 'Google Sans', Roboto, Arial, sans-serif; " +
+        "-fx-font-size: 14px; " +
+        "-fx-font-weight: 500; " +
+        "-fx-pref-height: 48px; " +
+        "-fx-padding: 2px 24px; " +
+        "-fx-alignment: center; " +
+        "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 3, 0, 0, 3);"
+    )
+  }
+
+  private def createSearchEventButton(): Button = new Button("Search events") {
+    onAction = _ => {
+      val result = searchEventPopup.showDialog(stage, allEvents)
+      result match {
+        case Some(realEventSeq) =>
+          if realEventSeq.nonEmpty then
+            currentFilteredEvents = realEventSeq
+            filteredEventsOn = true
+            // Update the weekView to show searched events
+            weekView.clearEvents()
+            weekView.addEvents(realEventSeq)
+            // Reset filter button is shown when filtered events are shown
+            val resetFilterButton = createResetFilterButton()
+            // Show the filtered weekView with a reset button
+            switchScenes(
+              createWeekViewScene(
+                constants.windowWidth * 0.01,
+                Some(resetFilterButton)
+              )
+            )
+          else
+            new Alert(AlertType.Information) { // No events found alert
+              title = "Search Results"
+              headerText = "No events found"
+              contentText = "No events found by your searchword."
+            }.showAndWait()
+
+        case _ =>
+      }
     }
     this.setStyle(
       "-fx-background-color: #fff; " +
@@ -449,7 +509,8 @@ object Main extends JFXApp3:
           createSaveButton(),
           createDeleteEventButton(),
           createTodayButton,
-          createCategoryFilterButton()
+          createCategoryFilterButton(),
+          createSearchEventButton()
         ) ++ resetFilterButton // resetFilterButton is added if it is given
       }
       center = weekView

@@ -2,20 +2,13 @@ package com.calendar.ui.components
 
 import com.calendar.models.Event
 import javafx.scene.control.SelectionMode
-import scalafx.scene.control.{
-  ButtonBar,
-  ButtonType,
-  Dialog,
-  ListCell,
-  ListView
-}
-import scalafx.stage.Window
-import scalafx.Includes.jfxDialogPane2sfx
-import scalafx.Includes.jfxNode2sfx
-import scalafx.scene.SceneIncludes.jfxMultipleSelectionModel2sfx
+import scalafx.Includes.{ jfxDialogPane2sfx, jfxNode2sfx }
 import scalafx.collections.ObservableBuffer
 import scalafx.geometry.Insets
-import scalafx.scene.layout.{ GridPane, VBox }
+import scalafx.scene.SceneIncludes.jfxMultipleSelectionModel2sfx
+import scalafx.scene.control.*
+import scalafx.scene.layout.VBox
+import scalafx.stage.Window
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
