@@ -3,23 +3,20 @@ package com.calendar.services
 import com.calendar.models.{ Category, Event }
 
 class Calendar(
-  // A map of specific calendar events where the String is the calendars name
-  var events: Map[String, List[Event]],
 
   // Map of events
   var eventMap: Map[String, Event],
 
-  // Categories which a specific calendar has
+  // Categories which the calendar has
   var categories: Seq[Category]
 ) {
 
   // Add an event to the calendar
-  def addEvent(newEvent: Event): Boolean =
+  def addEvent(newEvent: Event): Unit =
     val eventName = newEvent.name
     if (!eventMap.contains(eventName)) then
       eventMap += eventName -> newEvent
-      true
-    else false
+    
 
   // Delete an event from the calendar
   def deleteEvent(eventName: String): Boolean =

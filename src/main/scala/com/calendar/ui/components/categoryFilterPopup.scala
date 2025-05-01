@@ -78,7 +78,7 @@ object categoryFilterPopup {
 
     val result = dialog.showAndWait()
     result match {
-      case Some(categories: Seq[Category]) => Some(categories)
+      case Some(categories) => Some(categories.asInstanceOf[Seq[Category]])
       case _                               => None
     }
 

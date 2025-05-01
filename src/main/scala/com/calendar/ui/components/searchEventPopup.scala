@@ -111,7 +111,7 @@ object searchEventPopup {
     val result = dialog.showAndWait()
 
     result match {
-      case Some(events: Seq[Event]) => Some(events)
+      case Some(events) => Some(events.asInstanceOf[Seq[Event]])
       case _                        => None
     }
 

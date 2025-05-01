@@ -12,8 +12,6 @@ class ReminderManager(
   private var eventMap: Map[String, Event] = Map()
 ) {
 
-  val timeInterval = 1
-
   // Set a reminder for the event
   def setReminder(event: Event): Unit =
     event.reminder match
@@ -29,7 +27,7 @@ class ReminderManager(
       .filter(reminder =>
         reminder.getReminderTime
           .isAfter(currentTime) && reminder.getReminderTime
-          .isBefore(currentTime.plusMinutes(timeInterval))
+          .isBefore(currentTime.plusMinutes(1))
       )
       .flatMap(reminder => eventMap.get(reminder.eventId))
 

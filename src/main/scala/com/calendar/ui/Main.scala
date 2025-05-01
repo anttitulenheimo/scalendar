@@ -31,8 +31,7 @@ object Main extends JFXApp3:
 
   private def createDeleteEventButton(): Button = new Button("Delete") {
     onAction = _ =>
-      var allEvents = calendar.getAllEvents
-      if allEvents.nonEmpty then // No reason to delete if there is no events
+      if calendar.getAllEvents.nonEmpty then
         val result = deleteEventPopup.showDialog(stage, allEvents)
         result match
           case Some(eventToDelete: Event) =>
@@ -43,9 +42,10 @@ object Main extends JFXApp3:
               dailyView.clearEvents()
 
               // Update allEvents
-              allEvents = calendar.getAllEvents
+              allEvents = allEvents.filter(_.name != eventToDelete.name)
+              eventSeqMyCalendar = eventSeqMyCalendar.filter(_.name != eventToDelete.name) // Deletes the event from the eventSeqMyCalendar
 
-          case None =>
+          case _ =>
 
       else
         // Alert because no events
@@ -76,7 +76,7 @@ object Main extends JFXApp3:
       // Filter the userEvents
       eventSeqMyCalendar = allUserEvents
       // Temporary calendar for saving
-      val tempCal = new Calendar(Map(), Map(), defaultCategories)
+      val tempCal = new Calendar(Map(), defaultCategories)
       // Adds current events from eventSeqMyCalendar to the tempCal
       allUserEvents.foreach(event => tempCal.addEvent(event))
       // Uses tempCal's saveToFile method to save to myCalendar.ics
@@ -104,7 +104,7 @@ object Main extends JFXApp3:
   }
 
   // Calendar instance to handle events
-  private val calendar = new Calendar(Map(), Map(), defaultCategories)
+  private val calendar = new Calendar(Map(), defaultCategories)
 
   // Initialize empty seq
   private var eventSeqPublicHolidays: Seq[Event] = Seq()
@@ -137,7 +137,7 @@ object Main extends JFXApp3:
   private var weekNumber = LocalDate.now.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
   // Button to navigate to this day
-  private def createTodayButton: Button = new Button("Current week") {
+  private def createTodayButton(): Button = new Button("Current week") {
     onAction = _ =>
       startOfWeek = LocalDate.now.`with`(DayOfWeek.MONDAY)
       weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
@@ -177,7 +177,7 @@ object Main extends JFXApp3:
       else createWeekViewScene(constants.windowWidth * 0.01, None)
     )
 
-  // Handles the refreshing of selected week
+  // Handles the refreshing of a selected week
   private def refreshWeekView(): Unit =
     weekView.clearEvents()
     weekView.weekViewDatesRefresher(startOfWeek)
@@ -209,7 +209,7 @@ object Main extends JFXApp3:
           allEvents = allEvents :+ event
           eventSeqMyCalendar = eventSeqMyCalendar :+ event
 
-          // Navigate to the week containing the new created event
+          // Navigate to the week containing the newly created event
           startOfWeek = event.date.`with`(DayOfWeek.MONDAY)
           weekNumber = startOfWeek.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
 
@@ -226,7 +226,7 @@ object Main extends JFXApp3:
               createWeekViewScene(constants.windowWidth * 0.01, None)
             )
 
-        case _ => // The add event was canceled
+        case _ => // The added event was canceled
     this.setStyle(
       "-fx-background-color: #fff; " +
         "-fx-border-radius: 24px; " +
@@ -287,7 +287,7 @@ object Main extends JFXApp3:
               Some(resetFilterButton)
             )
           )
-        case None =>
+        case _ =>
       }
     }
     this.setStyle(
@@ -308,7 +308,7 @@ object Main extends JFXApp3:
   private def createResetFilterButton(): Button = new Button("Reset filter") {
     onAction = _ => {
       filteredEventsOn = false
-      currentFilteredEvents = Seq[Event]() // Filtered events is emptied
+      currentFilteredEvents = Seq[Event]() // Filtered events are emptied
       // Refresh and load weekView again
       refreshWeekView()
       switchScenes(createWeekViewScene(constants.windowWidth * 0.01, None))
@@ -385,7 +385,7 @@ object Main extends JFXApp3:
       )
       val selectedFile = fileChooser.showOpenDialog(stage)
 
-      // Events are loaded from file if the file is selected
+      // Events are loaded from a file if the file is selected
       if (selectedFile != null) then
         try {
           val loadedEvents =
@@ -436,7 +436,12 @@ object Main extends JFXApp3:
       Some(reminderManager)
     )
 
-    allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
+    allEvents = eventSeqMyCalendar
+
+    // Uncomment if you want to include Finland's public holidays
+    //allEvents = eventSeqPublicHolidays ++ eventSeqMyCalendar
+
+
 
     reminderTimer()
 
@@ -445,7 +450,7 @@ object Main extends JFXApp3:
     val weekViewScene: Scene = createWeekViewScene(fontSize, None)
     val dailyViewScene: Scene = createDailyViewScene(fontSize)
 
-    // Set up day selection handler in weekView
+    // Set up a day selection handler in weekView
     weekView.setOnDaySelected(date =>
       // Header is now day - date
       val dateString =
@@ -506,7 +511,7 @@ object Main extends JFXApp3:
     val weekLabel = new Label("Week " + weekNumber.toString) {
       font = Font.font("Montserrat", FontWeight.Medium, fontSize * 1.5)
     }
-    // Button to navigate to previous week
+    // Button to navigate to the previous week
     val preWeekButton = new Button("◀") {
       onAction = _ => navigateBetweenWeeks(-1)
       this.setStyle(
@@ -561,7 +566,7 @@ object Main extends JFXApp3:
           createAddEventButton(),
           createSaveButton(),
           createDeleteEventButton(),
-          createTodayButton,
+          createTodayButton(),
           createCategoryFilterButton(),
           createSearchEventButton(),
           createChooseFromFileButton()
@@ -579,7 +584,7 @@ object Main extends JFXApp3:
 
   // Creates the dailyViewScene
   private def createDailyViewScene(fontSize: Double): Scene = {
-    // Add date header for dailyView
+    // Add a date header for dailyView
     dateHeader = new Label("") {
       font = Font.font("Montserrat", FontWeight.Bold, fontSize * 1.5)
       this.setStyle("-fx-padding: 10 0 10 0;")
@@ -606,7 +611,7 @@ object Main extends JFXApp3:
       )
     }
 
-    // Add header container
+    // Add a header container
     val headerContainer = new VBox {
       spacing = 10
       children = Seq(

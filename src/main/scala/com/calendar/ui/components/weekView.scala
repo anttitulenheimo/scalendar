@@ -269,7 +269,7 @@ object weekView extends HBox {
               column.children.add(eventView.createEventDisplay(event))
             )
 
-  // Add all  the events
+  // Add all the events
   def addEvents(events: Seq[Event]) =
     events.foreach(addEvent)
 

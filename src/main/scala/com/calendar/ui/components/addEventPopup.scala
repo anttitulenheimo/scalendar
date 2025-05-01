@@ -18,6 +18,9 @@ import java.time.format.DateTimeFormatter
 import java.time.{ LocalDate, LocalDateTime, LocalTime }
 import scala.util.{ Failure, Success, Try }
 
+import scala.util.boundary
+import scala.util.boundary.break
+
 //The popup is a dialog box
 object addEventPopup {
 
@@ -165,6 +168,7 @@ object addEventPopup {
     // Result converter
     dialog.resultConverter = dialogButton => {
       if (dialogButton == addButtonType) then
+        boundary {
         try {
           val name = eventName.text().trim // Trim the excess spaces
           val startDate = startDatePicker.value()
@@ -191,7 +195,7 @@ object addEventPopup {
             else
               // Single day event
               ErrorDialog("End time must be after start time")
-            return null
+              break(null)
 
           // Find selected category from categoryCombobox or take the default category
           val selectedCategory = categoriesOptionsSeq
@@ -231,7 +235,8 @@ object addEventPopup {
         } catch
           case e: Exception =>
             ErrorDialog(e.getMessage)
-            null
+            break(null)
+        }
       else null
     }
 
