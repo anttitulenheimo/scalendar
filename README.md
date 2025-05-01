@@ -3,8 +3,8 @@
 
 # Calendar application
 
-[![GitHub issues](https://github.com/anttitulenheimo/scalendar/issues)](https://github.com/anttitulenheimo/scalendar/issues)
-[![GitHub pull requests](https://github.com/anttitulenheimo/scalendar/pulls)](https://github.com/anttitulenheimo/scalendar/pulls)
+[![GitHub issues](https://img.shields.io/github/issues-raw/navendu-pottekkat/awesome-readme)](https://github.com/anttitulenheimo/scalendar/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/navendu-pottekkat/awesome-readme)](https://github.com/anttitulenheimo/scalendar/pulls)
 
 ## About
 
@@ -33,15 +33,9 @@ You can store:
 - Search for all events related to a course, hobby, or person and display them in a list
 
 
-![GitHub issues](https://github.com/anttitulenheimo/scalendar/issues)
-: Dynamic badge that shows the number of open issues in the project.
-
-![GitHub pull requests](https://github.com/anttitulenheimo/scalendar/pulls)
-: Similar dynamic badge, but for pull requests.
 
 
 # Installation
-[(Back to top)](#table-of-contents)
 
 To build and run the project locally:
 
@@ -61,8 +55,7 @@ git clone https://github.com/anttitulenheimo/scalendar.git
 ```bash
 cd scalendar
 ```
-3. Run the application
-To run the application, execute the following command:
+3. To run the application execute the following command:
 
 ```bash
 sbt run
@@ -99,7 +92,6 @@ java -jar target/scala-<version>/scalendar-assembly-<version>.jar
 
 
 # Usage
-[(Back to top)](#table-of-contents)
 
 This calendar allows you to manage your events, view your schedule in different formats, and filter/search through your events. Below are the main features and how to use them:
 
